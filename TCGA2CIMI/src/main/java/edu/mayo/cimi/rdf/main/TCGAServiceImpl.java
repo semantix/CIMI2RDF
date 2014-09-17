@@ -39,6 +39,10 @@ public class TCGAServiceImpl
         String xml = kb.getDomainsAndCDEs(null);
         tags.clear();
         populateDomains(xml);
+
+        System.out.println("LOADED!! Number of domains=" + tags.size());
+
+
     }
 
     public void populateDomains(String xml)
@@ -59,7 +63,7 @@ public class TCGAServiceImpl
             XPathExpression expr = xpath.compile( "//results/result" );
             Object result = expr.evaluate( doc, XPathConstants.NODESET );
             NodeList nl = (NodeList) result;
-            System.out.println("length=" + nl.getLength());
+            //System.out.println("length=" + nl.getLength());
             for(int j=0 ; j < nl.getLength() ; j++)
             {
                 Node node = (Node) nl.item(j);
@@ -69,21 +73,33 @@ public class TCGAServiceImpl
                 String study = getValue(node, "study");
                 String domainName = getValue(node, "tag");
 
-                System.out.println("Tag=" + domainName);
+                /*System.out.println("Tag=" + domainName);
                 System.out.println("Study=" + study);
                 System.out.println("Public Id=" + pubId);
-                System.out.println("Long Name=" + cdeLn);
+                System.out.println("Long Name=" + cdeLn);*/
 
                 TCGADomainEntry entry = new TCGADomainEntry();
-                entry.cdeId = pubId;
-                entry.studyId = study;
+                entry.studyKey = study;
 
-                if (!cdes.containsKey(ModelUtils.key(pubId)))
+                CDE cde = cdes.get(ModelUtils.key(pubId));
+
+                if (cde == null)
                 {
-                    CDE cde = new CDE(pubId);
+                    cde = new CDE(pubId);
                     cde.longName = cdeLn;
                     cdes.put(cde.getId(), cde);
                 }
+
+                entry.cdeKey = cde.getId();
+
+                TCGADomain domain = tags.get(ModelUtils.key(domainName));
+
+                if (domain == null)
+                    domain = new TCGADomain(domainName);
+
+                domain.entries.add(entry);
+
+                tags.put(domain.getId(), domain);
             }
         }
         catch (Exception e)
