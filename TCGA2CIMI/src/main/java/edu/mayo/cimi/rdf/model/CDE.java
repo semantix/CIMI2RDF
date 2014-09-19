@@ -2,27 +2,28 @@ package edu.mayo.cimi.rdf.model;
 
 import edu.mayo.cimi.rdf.main.ModelUtils;
 
-import java.util.Vector;
-
 /**
  * Created by dks02 on 9/12/14.
  */
 public class CDE extends Top
 {
-    public String name;
+    public String publicId;
+    public String name; // short name given in TCGA or user context, But a CDE is idetified by publicID
     public String longName;
     public String definition;
-    public String objectClassPrefName;
-    public String objectClassLongName;
-    public Vector<CDEProperty> properties;
+    public String objectClassKey;
+    public String objectPropertyKey;
+    public String valueDomainKey;
+
 
     public CDE(String publicId)
     {
-        super.id = publicId;
+        this.publicId = publicId;
     }
 
     public String getId() throws ModelException
     {
-        return ModelUtils.key(id);
+        this.id =  ModelUtils.key(this.publicId);
+        return id;
     }
 }

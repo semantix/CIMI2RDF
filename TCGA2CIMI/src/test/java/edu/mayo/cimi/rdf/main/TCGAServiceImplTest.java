@@ -4,16 +4,9 @@ import junit.framework.TestCase;
 
 public class TCGAServiceImplTest extends TestCase
 {
-    public void testGetDomainsAndCDEs()
-    {
+    public void testGetDomainsAndCDEs() {
         RDFStoreQueries storeQueries = new RDFStoreQueries();
-        String domainNCdes = storeQueries.getDomainsAndCDEs(null);
+        String domainNCdes = storeQueries.getDistinctDomains();
         assertNotNull("Response is null" + domainNCdes);
-    }
-
-    public void testGetDictionaries() throws Exception
-    {
-        RDFStoreQueries storeQueries = new RDFStoreQueries();
-       assertNotNull("response is null", storeQueries.getDictionaries());
     }
 }

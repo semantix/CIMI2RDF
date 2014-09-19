@@ -13,75 +13,88 @@ public class RDFStoreQueries
     private static Store s_store = null;
 
 
-    public String getDomainsAndCDEs(String filter)
+    public String getDistinctDomains()
     {
         String query = getPrefixes() +
-                "select distinct ?tag ?study ?publicId ?longname" +
-                "{" +
-                "    GRAPH <http://tcga.nci.nih.gov/cde> " +
-                "    {" +
-                "       ?dataelement tcga:name ?longname ." +
-                "       ?dataelement tcga:cde ?publicId ." +
-                "       OPTIONAL {?dataelement tcga:studies ?studies ." +
-                "       ?studies tcga:study ?study . }" +
-                "       ?dataelement tcga:tags ?tags ." +
-                "       ?tags tcga:tag ?tag ." +
-                "     }" +
+                "select distinct ?tag " +
+                "  {  " +
+                "    GRAPH <http://tcga.nci.nih.gov/cde>  " +
+                "     { " +
+                "      ?dataelement tcga:tags ?tags . " +
+                "      ?tags tcga:tag ?tag . " +
+                "     } " +
                 "}";
 
         return getQueryResults(query);
     }
 
-    public String getDictionaries()
+    public String getCDEsForDomain(String domainNameTag)
     {
         String query = getPrefixes() +
-                "SELECT ?publicId WHERE {" +
-                " ?cde cde:PublicId ?publicId ." +
-                "} LIMIT 10";
-
-        String query2 = "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>   " +
-                "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>  " +
-                "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>  " +
-                "PREFIX owl:<http://www.w3.org/2002/07/owl#>  " +
-                "    PREFIX tcga:<http://tcga.nci.nih.gov/BCR/DataDictionary#> " +
-                "PREFIX cde:<http://rdf.cadsr.org/cde#> " +
-                "" +
-                "select distinct ?publicId ?cdelongname ?definition ?objClassLongName ?objClassPrefName ?propLongName ?propPrefName ?valueDomainName ?valueDomainType" +
-                "  { " +
-                "    GRAPH <http://tcga.nci.nih.gov/cde> " +
-                "     {" +
-                "      ?dataelement tcga:name ?longname ." +
-                "      ?dataelement tcga:cde ?publicId ." +
-                "      OPTIONAL {?dataelement tcga:studies ?studies ." +
-                "      ?studies tcga:study ?study . }" +
-                "      ?dataelement tcga:tags ?tags ." +
-                "      ?tags tcga:tag ?tag ." +
-                "      FILTER (?tag=\"clinical shared\")" +
-                "      }" +
-                "    GRAPH <http://rdf.cadsr.org/cde> " +
-                "    {" +
-                "       ?cde cde:PUBLICID ?publicId ." +
-                "       ?cde cde:CONTEXTNAME ?context ." +
-                "      ?cde cde:LONGNAME ?cdelongname ." +
-                "      ?cde cde:PREFERREDDEFINITION ?definition ." +
-                "      ?cde cde:DATAELEMENTCONCEPT ?deConcept ." +
-                "      ?deConcept cde:ObjectClass ?objectClass ." +
-                "      ?objectClass cde:LongName ?objClassLongName ." +
-                "      ?objectClass cde:PreferredName ?objClassPrefName ." +
-                "      ?deConcept cde:Property ?property ." +
-                "      ?property cde:LongName ?propLongName ." +
-                "      ?property cde:PreferredName ?propPrefName ." +
-                "      ?cde cde:VALUEDOMAIN ?valuedomain ." +
-                "      ?valuedomain cde:ValueDomainType ?valueDomainType ." +
-                "      ?valuedomain cde:LongName ?valueDomainName ." +
-                "" +
-                "     }" +
-                "   " +
-                "}";
+                "select distinct ?tag ?study ?publicId ?longname ?cdelongname ?definition ?objClassLongName ?objClassPrefName ?propLongName ?propPrefName ?valueDomainName ?valueDomainType " +
+                "        { " +
+                "            GRAPH <http://tcga.nci.nih.gov/cde>  " +
+                "            { " +
+                "                ?dataelement tcga:name ?longname . " +
+                "                    ?dataelement tcga:cde ?publicId . " +
+                "                    OPTIONAL {?dataelement tcga:studies ?studies . " +
+                "                    ?studies tcga:study ?study . } " +
+                "                ?dataelement tcga:tags ?tags . " +
+                "                    ?tags tcga:tag ?tag . " +
+                "                    FILTER (?tag=\"" + domainNameTag + "\") " +
+                "            } " +
+                "            GRAPH <http://rdf.cadsr.org/cde>  " +
+                "            { " +
+                "                ?cde cde:PUBLICID ?publicId . " +
+                "                    ?cde cde:CONTEXTNAME ?context . " +
+                "                    ?cde cde:LONGNAME ?cdelongname . " +
+                "                    ?cde cde:PREFERREDDEFINITION ?definition . " +
+                "                    ?cde cde:DATAELEMENTCONCEPT ?deConcept . " +
+                "                    ?deConcept cde:ObjectClass ?objectClass . " +
+                "                    ?objectClass cde:LongName ?objClassLongName . " +
+                "                    ?objectClass cde:PreferredName ?objClassPrefName . " +
+                "                    ?deConcept cde:Property ?property . " +
+                "                    ?property cde:LongName ?propLongName . " +
+                "                    ?property cde:PreferredName ?propPrefName . " +
+                "                    ?cde cde:VALUEDOMAIN ?valuedomain . " +
+                "                    ?valuedomain cde:ValueDomainType ?valueDomainType . " +
+                "                    ?valuedomain cde:LongName ?valueDomainName . " +
+                " " +
+                "            } " +
+                " " +
+                "        } ";
 
 
-        return getQueryResults(query2);
+        return getQueryResults(query);
     }
+
+    public String getObjectClassDetails(String objectClassPreferredName)
+    {
+        String query = getPrefixes() +
+                "select distinct ?publicId ?longname ?cdelongname ?objClassLongName ?objClassPrefName ?propLongName ?propPrefName ?valueDomainName ?valueDomainType " +
+                "    { " +
+                "        GRAPH <http://rdf.cadsr.org/cde>  " +
+                "        { " +
+                "            ?cde cde:PUBLICID ?publicId . " +
+                "                ?cde cde:CONTEXTNAME ?context . " +
+                "                ?cde cde:LONGNAME ?cdelongname . " +
+                "                ?cde cde:DATAELEMENTCONCEPT ?deConcept . " +
+                "                ?deConcept cde:ObjectClass ?objectClass . " +
+                "                ?objectClass cde:LongName ?objClassLongName . " +
+                "                ?objectClass cde:PreferredName ?objClassPrefName . " +
+                "                ?deConcept cde:Property ?property . " +
+                "                ?property cde:LongName ?propLongName . " +
+                "                ?property cde:PreferredName ?propPrefName . " +
+                "                ?cde cde:VALUEDOMAIN ?valuedomain . " +
+                "                ?valuedomain cde:ValueDomainType ?valueDomainType . " +
+                "                ?valuedomain cde:LongName ?valueDomainName . " +
+                "                FILTER (?objClassPrefName=\"" + objectClassPreferredName + "\") " +
+                "        } " +
+                "    }";
+
+        return getQueryResults(query);
+    }
+
 
     public static String PREFIXES = null;
 

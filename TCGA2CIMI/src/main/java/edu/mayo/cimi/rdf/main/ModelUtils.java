@@ -29,4 +29,19 @@ public class ModelUtils
 
         return ModelUtils.removeNonAlphaNum(inputString);
     }
+
+    public static String makeCSVRow(int rowNumber, String[] cols)
+    {
+        String row = appendDQ("" + ((rowNumber < 1)? "Sr#" : rowNumber));
+
+        for (String col : cols)
+            row += "," + appendDQ(col);
+
+        return row;
+    }
+
+    public static String appendDQ(String str)
+    {
+        return "\"" + str + "\"";
+    }
 }
