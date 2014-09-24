@@ -1,0 +1,20 @@
+# c14n-version: 3
+@prefix cimi: <http://opencimi.org/rm/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mms: <http://rdf.cdisc.org/mms#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cacde: <http://rdf.cacde-qa.org/cacde/element#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://rdf.cacde-qa.org/cacde/element>
+rdf:type owl:Ontology ;
+dc:creator "caCDE-QA Semantic Technology Project"^^xsd:string ;
+owl:imports <http://opencimi.org/rm/CIMIReferenceModelOntology> ;
+owl:versionInfo "1.0"^^xsd:string ;
+skos:definition "An ontology representing the content of the caCDE-QA Pharmacologic Substance Model using cancer CDEs as published by caDSR."^^xsd:string ;
+skos:prefLabel "caCDE-QA Pharmacologic Substance Model"^^xsd:string ;
+.
