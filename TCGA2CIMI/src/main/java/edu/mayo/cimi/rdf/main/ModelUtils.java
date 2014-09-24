@@ -34,8 +34,14 @@ public class ModelUtils
     {
         String row = appendDQ("" + ((rowNumber < 1)? "Sr#" : rowNumber));
 
+        if (cols == null)
+            return row;
+
+        if (cols.length < 1)
+            return row;
+
         for (String col : cols)
-            row += "," + appendDQ(col);
+            row += "," + appendDQ((col == null)?"":col);
 
         return row;
     }

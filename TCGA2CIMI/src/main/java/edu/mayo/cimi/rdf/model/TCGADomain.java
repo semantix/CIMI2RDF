@@ -38,7 +38,7 @@ public class TCGADomain extends Top
         return (entries.get(entry.getId()) != null);
     }
 
-    public Vector<String> getUniqueCDEsReferred()
+    public Vector<String> getUniqueCDEsReferenced()
     {
         Vector<String> ucde = new Vector<String>();
 

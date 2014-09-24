@@ -48,28 +48,15 @@ public class TCGAServiceImpl
                 tcgaimpl.updateObjectClass(objcl, xml);
             }
 
-            System.out.println("Creating Report...");
-            String[] header = new String[10];
-            header[0] = "TCGA Domain Name";
-            header[1] = "CDEs Used";
-            header[2] = "Object Classes Used";
-            header[3] = "Properties Used";
-            header[4] = "Value Set Used";
-            header[5] = "Enumerated VS";
-            header[6] = "Total CDEs (context: object classes used)";
-            header[7] = "Total Properties (context: object classes used)";
-            header[8] = "Total Value Sets (context: object classes used)";
-            header[9] = "Total Enumerated VS (context: object classes used)";
-
-            String reportContent = ModelUtils.makeCSVRow(0, header) + "\n";
-
-            int i=0;
-            for (String key :tcgaimpl.tags.keySet())
-               reportContent += ModelUtils.makeCSVRow(++i, tcgaimpl.getReportColumns(tcgaimpl.tags.get(key))) + "\n";
-
-            FileUtils.createFileWithContents("TCGADomain.csv", reportContent);
+            // Creates report for all domains.
+            tcgaimpl.createDomainReport("TCGADomain.csv");
+            tcgaimpl.createDomainMatrix("Matrix_Domain_OCLS.csv", ReportType.OBJECTCLASSES);
+            tcgaimpl.createDomainMatrix("Matrix_Domain_PROP.csv", ReportType.PROPERTIES);
+            tcgaimpl.createDomainMatrix("Matrix_Domain_VD.csv", ReportType.VALUEDOMAINS);
+            tcgaimpl.createDomainMatrix("Matrix_Domain_EVD.csv", ReportType.ENUMVALUEDOMAINS);
 
             System.out.println("DONE DONE DONE !!!");
+
         }
         catch (Exception e)
         {
@@ -265,7 +252,7 @@ public class TCGAServiceImpl
                 else
                     continue;
 
-                System.out.println("Found unique " + domain.getUniqueCDEsReferred().size() + " CDEs for Doamin \"" + domainName + "\"!");
+                System.out.println("Found unique " + domain.getUniqueCDEsReferenced().size() + " CDEs for Doamin \"" + domainName + "\"!");
                 tags.put(domain.getId(), domain);
             }
 
@@ -287,6 +274,12 @@ public class TCGAServiceImpl
                     DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
             InputSource is = new InputSource();
+
+            if (xml == null) {
+                System.out.println("HERE");
+                return null;
+            }
+
             is.setCharacterStream(new StringReader(xml));
 
             Document doc = db.parse(is);
@@ -326,11 +319,11 @@ public class TCGAServiceImpl
         }
     }
 
-    public String[] getReportColumns(TCGADomain dom)
+    public String[] getAllDomainsReportColumns(TCGADomain dom)
     {
         String[] cols = new String[10];
 
-        Vector<String> cdeRefd =  dom.getUniqueCDEsReferred();
+        Vector<String> cdeRefd =  dom.getUniqueCDEsReferenced();
         Vector<String> ocRefd = new Vector<String>();
         Vector<String> prRefd = new Vector<String>();
         Vector<String> vdRefd = new Vector<String>();
@@ -354,13 +347,16 @@ public class TCGAServiceImpl
             }
         }
 
-        Vector<String> all_cdeRefd =  dom.getUniqueCDEsReferred();
+        Vector<String> all_cdeRefd =  dom.getUniqueCDEsReferenced();
         Vector<String> all_prRefd = new Vector<String>();
         Vector<String> all_vdRefd = new Vector<String>();
         int all_enumerated = 0;
 
         for (String obck : ocRefd)
         {
+            if (objectClasses.get(obck) == null)
+                continue;
+
             for (String allCdk : objectClasses.get(obck).cdeKeys)
             {
                 CDE cdeRf = cdes.get(allCdk);
@@ -392,4 +388,153 @@ public class TCGAServiceImpl
         cols[9] = "" + all_enumerated; // Total Number of Enumerated Value Sets (context: object classes used)
         return cols;
     }
+
+    public void createDomainReport(String fileName)
+    {
+        try {
+            System.out.println("Creating Report: " + fileName);
+            String[] header = new String[10];
+            header[0] = "TCGA Domain Name";
+            header[1] = "CDEs Used";
+            header[2] = "Object Classes Used";
+            header[3] = "Properties Used";
+            header[4] = "Value Set Used";
+            header[5] = "Enumerated VS";
+            header[6] = "Total CDEs (context: object classes used)";
+            header[7] = "Total Properties (context: object classes used)";
+            header[8] = "Total Value Sets (context: object classes used)";
+            header[9] = "Total Enumerated VS (context: object classes used)";
+
+            String reportContent = ModelUtils.makeCSVRow(0, header) + "\n";
+
+            int i = 0;
+            for (String key : tags.keySet())
+                reportContent += ModelUtils.makeCSVRow(++i, getAllDomainsReportColumns(tags.get(key))) + "\n";
+
+            FileUtils.createFileWithContents(fileName, reportContent);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+
+        }
+    }
+
+    public enum ReportType
+    {
+        OBJECTCLASSES,
+        PROPERTIES,
+        VALUEDOMAINS,
+        ENUMVALUEDOMAINS
+    }
+
+    public void createDomainMatrix(String fileName, ReportType reportType)
+    {
+        try
+        {
+            System.out.println("Creating Report: " + fileName);
+            int rows = tags.keySet().size() + 1;
+            int cols = 0;
+
+            switch (reportType)
+            {
+                case OBJECTCLASSES: cols = objectClasses.size() + 1; break;
+                case PROPERTIES: cols = objectProperties.size() + 1;break;
+                case VALUEDOMAINS:
+                case ENUMVALUEDOMAINS: cols = valueDomains.size() + 1;break;
+            }
+
+            String[][] matrix = new String[rows][cols];
+
+            int i = 0;
+            for (String tag: tags.keySet())
+                matrix[++i][0] = tag;
+
+            int j = 0;
+            switch (reportType)
+            {
+                case OBJECTCLASSES: for(String obck : objectClasses.keySet())
+                                        matrix[0][++j] = obck;
+                                    break;
+                case PROPERTIES: for(String obck : objectProperties.keySet())
+                                            matrix[0][++j] = obck;
+                                        break;
+                case VALUEDOMAINS:
+                case ENUMVALUEDOMAINS: for(String obck : valueDomains.keySet())
+                                        matrix[0][++j] = obck;
+                                        break;
+            }
+
+
+            for (int m=1; m < rows; m++)
+            {
+                TCGADomain dom = tags.get(matrix[m][0]);
+
+                Vector<String> cdeRefd = dom.getUniqueCDEsReferenced();
+                Vector<String> ocRefd = new Vector<String>();
+                Vector<String> prRefd = new Vector<String>();
+                Vector<String> vdRefd = new Vector<String>();
+
+                for (String cdk : cdeRefd)
+                {
+                    CDE cdeRf = cdes.get(cdk);
+
+                    if (!ocRefd.contains(cdeRf.objectClassKey))
+                        ocRefd.add(cdeRf.objectClassKey);
+
+                    if (!prRefd.contains(cdeRf.objectPropertyKey))
+                        prRefd.add(cdeRf.objectPropertyKey);
+
+                    if (!vdRefd.contains(cdeRf.valueDomainKey))
+                        vdRefd.add(cdeRf.valueDomainKey);
+                }
+
+                for (int n = 1; n < cols; n++)
+                {
+                    switch (reportType)
+                    {
+                        case OBJECTCLASSES: matrix[m][n] = (ocRefd.contains(matrix[0][n])) ? "1" : "0";
+                            break;
+                        case PROPERTIES: matrix[m][n] = (prRefd.contains(matrix[0][n])) ? "1" : "0";
+                            break;
+                        case VALUEDOMAINS:
+                        case ENUMVALUEDOMAINS: matrix[m][n] = (vdRefd.contains(matrix[0][n])) ? "1" : "0";
+                            break;
+                    }
+
+                }
+            }
+
+            for (i=1; i < rows; i++)
+                matrix[i][0] = tags.get(matrix[i][0]).domainName;
+
+            for (j=1; j < cols; j++)
+            {
+                switch (reportType)
+                {
+                    case OBJECTCLASSES: matrix[0][j] = objectClasses.get(matrix[0][j]).longName + "(" + objectClasses.get(matrix[0][j]).prefName + ")";
+                        break;
+                    case PROPERTIES: matrix[0][j] = objectProperties.get(matrix[0][j]).longName + "(" + objectProperties.get(matrix[0][j]).prefName + ")";
+                        break;
+                    case VALUEDOMAINS:
+                    case ENUMVALUEDOMAINS: matrix[0][j] = valueDomains.get(matrix[0][j]).name + ((valueDomains.get(matrix[0][j]).isEnumerated)?"(Enumerated)": "");
+                        break;
+                }
+
+            }
+
+            String reportContent = null;
+
+            for (i=0; i < rows;i++)
+                reportContent += ModelUtils.makeCSVRow(i, matrix[i]) + "\n";
+
+            FileUtils.createFileWithContents(fileName, reportContent);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+
+        }
+    }
+
 }

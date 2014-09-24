@@ -75,7 +75,8 @@ public class RDFStoreQueries
                 "    { " +
                 "        GRAPH <http://rdf.cadsr.org/cde>  " +
                 "        { " +
-                "            ?cde cde:PUBLICID ?publicId . " +
+                "                FILTER (?objClassPrefName=\"" + objectClassPreferredName + "\") " +
+                "                ?cde cde:PUBLICID ?publicId . " +
                 "                ?cde cde:CONTEXTNAME ?context . " +
                 "                ?cde cde:LONGNAME ?cdelongname . " +
                 "                ?cde cde:DATAELEMENTCONCEPT ?deConcept . " +
@@ -88,9 +89,8 @@ public class RDFStoreQueries
                 "                ?cde cde:VALUEDOMAIN ?valuedomain . " +
                 "                ?valuedomain cde:ValueDomainType ?valueDomainType . " +
                 "                ?valuedomain cde:LongName ?valueDomainName . " +
-                "                FILTER (?objClassPrefName=\"" + objectClassPreferredName + "\") " +
                 "        } " +
-                "    }";
+                "    } LIMIT 500";
 
         return getQueryResults(query);
     }
