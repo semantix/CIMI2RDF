@@ -405,11 +405,11 @@ public class TCGAServiceImpl
             header[8] = "Total Value Sets (context: object classes used)";
             header[9] = "Total Enumerated VS (context: object classes used)";
 
-            String reportContent = ModelUtils.makeCSVRow(0, header) + "\n";
+            String reportContent = ModelUtils.makeCSVRow(0, header, false) + "\n";
 
             int i = 0;
             for (String key : tags.keySet())
-                reportContent += ModelUtils.makeCSVRow(++i, getAllDomainsReportColumns(tags.get(key))) + "\n";
+                reportContent += ModelUtils.makeCSVRow(++i, getAllDomainsReportColumns(tags.get(key)), false) + "\n";
 
             FileUtils.createFileWithContents(fileName, reportContent);
         }
@@ -436,12 +436,18 @@ public class TCGAServiceImpl
             int rows = tags.keySet().size() + 1;
             int cols = 0;
 
+            Vector<String> enumeratedVDKeys = new Vector<String>();
             switch (reportType)
             {
                 case OBJECTCLASSES: cols = objectClasses.size() + 1; break;
                 case PROPERTIES: cols = objectProperties.size() + 1;break;
-                case VALUEDOMAINS:
-                case ENUMVALUEDOMAINS: cols = valueDomains.size() + 1;break;
+                case VALUEDOMAINS: cols = valueDomains.size() + 1;break;
+                case ENUMVALUEDOMAINS:
+                    for (String vdKey : valueDomains.keySet())
+                        if (valueDomains.get(vdKey).isEnumerated)
+                            enumeratedVDKeys.add(vdKey);
+
+                    cols = enumeratedVDKeys.size() + 1; break;
             }
 
             String[][] matrix = new String[rows][cols];
@@ -456,13 +462,15 @@ public class TCGAServiceImpl
                 case OBJECTCLASSES: for(String obck : objectClasses.keySet())
                                         matrix[0][++j] = obck;
                                     break;
-                case PROPERTIES: for(String obck : objectProperties.keySet())
-                                            matrix[0][++j] = obck;
+                case PROPERTIES: for(String obpr : objectProperties.keySet())
+                                            matrix[0][++j] = obpr;
                                         break;
-                case VALUEDOMAINS:
-                case ENUMVALUEDOMAINS: for(String obck : valueDomains.keySet())
-                                        matrix[0][++j] = obck;
-                                        break;
+                case VALUEDOMAINS:  for(String vdk : valueDomains.keySet())
+                                        matrix[0][++j] = vdk;
+                                    break;
+                case ENUMVALUEDOMAINS: for(String evdk : enumeratedVDKeys)
+                                            matrix[0][++j] = evdk;
+                                       break;
             }
 
 
@@ -526,7 +534,7 @@ public class TCGAServiceImpl
             String reportContent = null;
 
             for (i=0; i < rows;i++)
-                reportContent += ModelUtils.makeCSVRow(i, matrix[i]) + "\n";
+                reportContent += ModelUtils.makeCSVRow(i, matrix[i], true) + "\n";
 
             FileUtils.createFileWithContents(fileName, reportContent);
         }

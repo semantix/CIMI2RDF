@@ -30,18 +30,38 @@ public class ModelUtils
         return ModelUtils.removeNonAlphaNum(inputString);
     }
 
-    public static String makeCSVRow(int rowNumber, String[] cols)
+    public static String makeCSVRow(int rowNumber, String[] cols, boolean showTotalReferenced)
     {
-        String row = appendDQ("" + ((rowNumber < 1)? "Sr#" : rowNumber));
-
         if (cols == null)
-            return row;
+            return "";
+
+        int count = 0;
+
+        String row = "";
+
+        String refTitle = (showTotalReferenced)? (appendDQ("Total Referenced") + ",") : "";
+
+        if (rowNumber < 1)
+            row =  refTitle + appendDQ("Sr#");
 
         if (cols.length < 1)
             return row;
 
+        String tempRow = "";
         for (String col : cols)
-            row += "," + appendDQ((col == null)?"":col);
+        {
+            tempRow += "," + appendDQ((col == null) ? "" : col);
+
+            if ((col != null)&&("1".equals(col.trim())))
+                count++;
+        }
+
+        String refVal = (showTotalReferenced)? ("" + ((count > 0)?count:" ") + ","):"";
+
+        if (rowNumber > 0)
+            row +=  refVal + appendDQ("" + rowNumber) + tempRow;
+        else
+            row += tempRow;
 
         return row;
     }
