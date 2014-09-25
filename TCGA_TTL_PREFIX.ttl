@@ -1,0 +1,25 @@
+@prefix cimi: <http://opencimi.org/rm/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix mms: <http://rdf.cdisc.org/mms#> .
+@prefix : <http://www.semanticweb.org/owl/owlapi/turtle#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix cacde: <http://rdf.cacde-qa.org/cacde/element#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@base <http://rdf.cacde-qa.org/cacde/element> .
+
+<http://rdf.cacde-qa.org/cacde/element> rdf:type owl:Ontology ;
+                                        
+                                        owl:versionInfo "1.0"^^xsd:string ;
+                                        
+                                        skos:definition "An ontology representing the content of the caCDE-QA Pharmacologic Substance Model using cancer CDEs as published by caDSR."^^xsd:string ;
+                                        
+                                        skos:prefLabel "caCDE-QA Pharmacologic Substance Model"^^xsd:string ;
+                                        
+                                        dc:creator "caCDE-QA Semantic Technology Project"^^xsd:string ;
+                                        
+                                        owl:imports cimi:CIMIReferenceModelOntology .
