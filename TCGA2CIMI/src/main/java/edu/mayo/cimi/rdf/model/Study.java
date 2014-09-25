@@ -19,4 +19,9 @@ public class Study extends Top
         this.id =  ModelUtils.key(studyName);
         return id;
     }
+
+    public String getTTL()
+    {
+        return null;
+    }
 }

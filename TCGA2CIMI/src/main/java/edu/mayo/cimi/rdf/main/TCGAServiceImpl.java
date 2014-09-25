@@ -13,6 +13,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+import java.io.File;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Vector;
@@ -39,6 +40,8 @@ public class TCGAServiceImpl
             String xml = tcgaimpl.kb.getDistinctDomains();
             tcgaimpl.populateDomains(xml);
 
+
+
             int obi = 0;
             for (ObjectClass objcl : tcgaimpl.objectClasses.values())
             {
@@ -47,6 +50,10 @@ public class TCGAServiceImpl
                 xml = tcgaimpl.kb.getObjectClassDetails(objcl.prefName);
                 tcgaimpl.updateObjectClass(objcl, xml);
             }
+
+            String turtleFileName = "TCGA_DataElements.ttl";
+            System.out.println("Creating Turtle File (TTL)" + turtleFileName);
+            tcgaimpl.createTTLFile(turtleFileName);
 
             // Creates report for all domains.
             tcgaimpl.createDomainReport("TCGADomain.csv");
@@ -452,6 +459,8 @@ public class TCGAServiceImpl
 
             String[][] matrix = new String[rows][cols];
 
+            matrix[0][0] = "TCGA Domain Name";
+
             int i = 0;
             for (String tag: tags.keySet())
                 matrix[++i][0] = tag;
@@ -531,7 +540,7 @@ public class TCGAServiceImpl
 
             }
 
-            String reportContent = null;
+            String reportContent = "";
 
             for (i=0; i < rows;i++)
                 reportContent += ModelUtils.makeCSVRow(i, matrix[i], true) + "\n";
@@ -545,4 +554,34 @@ public class TCGAServiceImpl
         }
     }
 
+    public void createTTLFile(String fileName)
+    {
+        String prefixFileName = "TCGA_TTL_PREFIX.ttl";
+
+        try {
+            File prefFl = new File(prefixFileName);
+            String pref = FileUtils.getContents(prefFl);
+
+            String content = "\n";
+
+            for (ObjectClass oc : objectClasses.values())
+            {
+                content += "\n" + oc.getTTL();
+            }
+
+            for (ObjectProperty op : objectProperties.values())
+            {
+                content += "\n" + op.getTTL();
+            }
+
+            content = pref + content;
+
+            FileUtils.createFileWithContents(fileName, content);
+        }
+        catch(Exception e)
+        {
+            System.out.println("Error in creating TTL File." + e.getMessage() + "\n\n");
+            e.printStackTrace();
+        }
+    }
 }

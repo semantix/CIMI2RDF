@@ -29,4 +29,17 @@ public class ObjectClass extends Top
         if (!cdeKeys.contains(cdeKey))
             cdeKeys.add(cdeKey);
     }
+
+    public String getTTL()
+    {
+        return  "\n<http://rdf.cacde-qa.org/cacde/element#" + ModelUtils.removeNonAlphaNum(this.longName) + ">" +
+                "\nrdf:type cimi:ITEM_GROUP ;" +
+                "\nrdf:type mms:DataElement ;" +
+                "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +
+                "\nskos:definition \"" + this.longName + "\"^^xsd:string ;" +
+                "\nmms:dataElementDescription \"" + this.longName + "\"^^xsd:string ;" +
+                "\nmms:dataElementLabel \"" + this.longName + "\"^^xsd:string ;" +
+                "\nmms:dataElementName \"" + this.prefName + "\"^^xsd:string ;" +
+                "\nmms:dataElementType \"Object Class\"^^xsd:string ;";
+    }
 }

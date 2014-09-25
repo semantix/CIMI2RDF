@@ -26,4 +26,9 @@ public class CDE extends Top
         this.id =  ModelUtils.key(this.publicId);
         return id;
     }
+
+    public String getTTL()
+    {
+        return "CDE:" + name;
+    }
 }

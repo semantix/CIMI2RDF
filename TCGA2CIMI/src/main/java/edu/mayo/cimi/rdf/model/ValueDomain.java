@@ -20,4 +20,9 @@ public class ValueDomain extends Top
         this.id =  ModelUtils.key(name);
         return id;
     }
+
+    public String getTTL()
+    {
+        return "VD:" + name;
+    }
 }

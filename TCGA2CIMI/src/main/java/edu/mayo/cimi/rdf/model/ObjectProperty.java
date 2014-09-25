@@ -29,4 +29,9 @@ public class ObjectProperty extends Top
         if (!cdeKeys.contains(cdeKey))
             cdeKeys.add(cdeKey);
     }
+
+    public String getTTL()
+    {
+        return "PROP:" + prefName;
+    }
 }

@@ -50,4 +50,9 @@ public class TCGADomain extends Top
 
         return ucde;
     }
+
+    public String getTTL()
+    {
+        return null;
+    }
 }

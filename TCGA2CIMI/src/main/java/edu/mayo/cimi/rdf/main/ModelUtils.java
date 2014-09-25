@@ -37,7 +37,7 @@ public class ModelUtils
 
         int count = 0;
 
-        String row = "";
+        String row = " ";
 
         String refTitle = (showTotalReferenced)? (appendDQ("Total Referenced") + ",") : "";
 
@@ -56,12 +56,14 @@ public class ModelUtils
                 count++;
         }
 
-        String refVal = (showTotalReferenced)? ("" + ((count > 0)?count:" ") + ","):"";
+        String refVal = "";
+        if (showTotalReferenced)
+            refVal = "" + count + ",";
 
         if (rowNumber > 0)
-            row +=  refVal + appendDQ("" + rowNumber) + tempRow;
-        else
-            row += tempRow;
+            row +=  refVal + rowNumber;
+
+        row += tempRow;
 
         return row;
     }

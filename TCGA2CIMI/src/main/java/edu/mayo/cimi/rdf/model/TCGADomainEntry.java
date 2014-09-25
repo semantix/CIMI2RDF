@@ -13,4 +13,9 @@ public class TCGADomainEntry extends Top
         this.id =  this.cdeKey + this.studyKey;
         return id;
     }
+
+    public String getTTL()
+    {
+        return null;
+    }
 }
