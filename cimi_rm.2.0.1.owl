@@ -1,0 +1,549 @@
+<rdf:RDF
+    xmlns:mms="http://rdf.cdisc.org/mms#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"   
+    xmlns:cimi="http://opencimi.org/rm/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:spin="http://spinrdf.org/spin#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:spl="http://spinrdf.org/spl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <owl:Ontology rdf:about="http://opencimi.org/rm/CIMIReferenceModelOntology">
+    <owl:imports rdf:resource="http://rdf.cdisc.org/mms"/>
+    <owl:versionInfo>v2.0.1</owl:versionInfo>
+    <rdfs:comment>Converted from CIMI Reference Model v2.0.1 by Guoqian Jiang (Mayo Clinic) in September 4, 2014.</rdfs:comment>
+  </owl:Ontology>
+  <owl:Class rdf:about="http://opencimi.org/rm/YESNO">
+    <rdfs:subClassOf>
+      <rdf:Description rdf:about="http://opencimi.org/rm/DATA_VALUE">
+        <rdfs:subClassOf>
+          <owl:Class rdf:about="http://opencimi.org/rm/RM"/>
+        </rdfs:subClassOf>
+      </rdf:Description>
+    </rdfs:subClassOf>
+    <rdfs:comment>Values which represent boolean data, such as true/false or yes/no. For such data, it is important to devise the meanings (usually questions in subjective data) carefully, so that the only allowed results are in fact true or false. The YESNO class should not be used as a replacement for naively modelled enumerated types such as male/female etc. Such values should be coded.</rdfs:comment>
+    <rdfs:label>YESNO</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/CODED_TEXT">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/TEXT"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>A single code, or a code expression from a given terminology.</rdfs:comment>
+    <rdfs:label>CODED_TEXT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ACTOR">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/PARTY"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>An ancestor of all real-world types, including people and organisations. An actor is any real-world entity capable of taking on a role.GROUPA group is a real world group of parties which is created by another party (usually an organisation) for some specific purpose. A typical clinical example is that of the specialist care team, e.g. cardiology team. The members of the group usually work together.AGENT (DEVICE)A generic concept of any kind of agent, including devices, software systems, but not humans or organisations.PERSONThe generic description of a person. PERSON provides a dedicated type to which Person archetypes can be targeted.ORGANISATIONA generic description of an organisation. An organisation is a legally constituted body whose existence (in general) outlives the existence of parties considered to be part of it.</rdfs:comment>
+    <rdfs:label>ACTOR</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PARTY_RELATIONSHIP">
+    <rdfs:subClassOf>
+      <rdf:Description rdf:about="http://opencimi.org/rm/LOCATABLE">
+        <rdfs:subClassOf>
+          <owl:Class rdf:about="http://opencimi.org/rm/RM"/>
+        </rdfs:subClassOf>
+      </rdf:Description>
+    </rdfs:subClassOf>
+    <rdfs:comment>A generic description of a relationship between the source and target parties.</rdfs:comment>
+    <rdfs:label>PARTY_RELATIONSHIP</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ORDERED_VALUE">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>An abstract class defining the concept of ordered values, which includes ordinals as well as true quantities. </rdfs:comment>
+    <rdfs:label>ORDERED_VALUE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ELEMENT">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/ITEM"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>A type of data ITEM, which does not itself contain ITEMs.</rdfs:comment>
+    <rdfs:label>ELEMENT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ENCAPSULATED">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>Abstract class defining the common meta-data of all types of encapsulated data.</rdfs:comment>
+    <rdfs:label>ENCAPSULATED</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/COUNT">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/AMOUNT"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>A countable quantity. Used for countable types, such as number of pregnancies, number of steps (taken by a physiotherapy patient), and number of cigarettes smoked in a day. Not to be used for amounts of physical entities (which have units).</rdfs:comment>
+    <rdfs:label>COUNT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/URI_VALUE">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>A data type used for referring to information resources. The URI type allows data values which are references to objects on the world wide web to be created. Its specialisation, EHR_URI, enables any element to be identified in the same way as other objects on the web. The EHR_URI type is convenient, because it is a string, like any other URI, and is therefore easily transportable and processable. Because it has its own scheme space (i.e. ehr), instances can be globally unique, as long as EHR identification is globally unique. EHR_URIs are used to express all runtime paths in the EHR.</rdfs:comment>
+    <rdfs:label>URI_VALUE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ITEM">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:comment>The abstract parent of CLUSTER and ELEMENT representation classes. </rdfs:comment>
+    <rdfs:label>ITEM</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/DATE_TIME">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/QUANTIFIED"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Represents an absolute point in time, specified to the second. Semantics defined by ISO 8601. Used for recording a precise point in real world time, and for approximate time stamps.value constrained to: The ISO8601 date/time string.</rdfs:comment>
+    <rdfs:label>DATE_TIME</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PARSABLE">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/ENCAPSULATED"/>
+    <rdfs:comment>Encapsulated data expressed as a parsable String. The internal model of the data item is not described in the model, because the form of the data is assumed to be plaintext, rather than compressed or other types of large binary data. </rdfs:comment>
+    <rdfs:label>PARSABLE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/TEXT">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>A text item, which may contain any amount of legal characters. TEXT may either be coded, codeable or plain.A text item, which may either be a plain string value (with optional term mappings), or text that has been coded according to a given terminology.</rdfs:comment>
+    <rdfs:label>TEXT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/Primitive_Types">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/RM"/>
+    </rdfs:subClassOf>
+    <rdfs:label>Primitive_Types</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/IDENTIFIER">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>A type for representing identifiers of real-world entities. Typical identifiers include drivers licence number, social security number, veterans affairs number, prescription id, order id, and so on. IDENTIFIER is used to represent any identifier of a real thing, issued by some authority or agency. IDENTIFIER is not used to express identifiers generated by the infrastructure to refer to information items; the types OBJECT_ID and OBJECT_REF and subtypes are defined for this purpose.</rdfs:comment>
+    <rdfs:label>IDENTIFIER</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PROPORTION">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/AMOUNT"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Models a ratio of values, i.e. where the numerator and denominator are both pure numbers. Used for recording titers (e.g. 1:128), concentration ratios, e.g. Na:K (unitary denominator), albumin:creatinine ratio, and percentages, e.g. red cell distirbution width (RDW). Should not be used to represent things like blood pressure which are often written using a  /' character, giving the misleading impression that the item is a ratio, when in fact it is a structured value. E.g. visual acuity  6/24  is not a ratio. Should not be used for formulations. </rdfs:comment>
+    <rdfs:label>PROPORTION</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/DATE">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATE_TIME"/>
+    <rdfs:comment>Represents an absolute point in time, as measured on the Gregorian calendar, and specified only to the day. Semantics defined by ISO 8601. Used for recording dates in real world time. The partial form is used for approximate birth dates, dates of death, etc. value constrained to: The ISO 8601 date string.</rdfs:comment>
+    <rdfs:label>DATE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/DURATION">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/QUANTITY"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Represents a period of time with respect to a notional point in time, which is not specified. A sign may be used to indicate the duration is  backwards  in time rather than forwards. </rdfs:comment>
+    <rdfs:label>DURATION</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ITEM_GROUP">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/ITEM"/>
+    <rdfs:comment>The grouping variant of ITEM, which may contain further instances of ITEM, in an ordered list. </rdfs:comment>
+    <rdfs:label>ITEM_GROUP</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/QUANTITY">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/AMOUNT"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>A type representing a quantity, i.e. a measure which includes both a numeric magnitude and a coded units. The quantity's units may be represented in any code system, including the Unified Code for Units of Measure (UCUM), and SNOMED CT. Quantities can also be used for time durations, where the units represents a temporal measure (e.g. seconds, minutes, hours, days, months, years).</rdfs:comment>
+    <rdfs:label>QUANTITY</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/EHR_URI">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/URI_VALUE"/>
+    <rdfs:comment>A URI which has the scheme name ehr, and which can only reference elements in EHRs. Used to reference elements in an EHR, which may be the current one, or another.</rdfs:comment>
+    <rdfs:label>EHR_URI</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/AMOUNT">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/QUANTIFIED"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>Abstract class defining the concept of relative quantified amounts'. For relative quantities, the  +' and  -' operators are defined (unlike descendants of ABSOLUTE_QUANTITY, such as the date/time types). </rdfs:comment>
+    <rdfs:label>AMOUNT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/TIME">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATE_TIME"/>
+    <rdfs:comment>Represents an absolute point in time from an origin usually interpreted as meaning the start of the current day, specified to the second. Semantics defined by ISO 8601. Used for recording real world times, rather than scientifically measured fine amounts of time. The partial form is used for approximate times of events and substance administrations. value constrained to: The ISO 8601 time string.</rdfs:comment>
+    <rdfs:label>TIME</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PLAIN_TEXT">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/TEXT"/>
+    <rdfs:comment>A string of characters, written in a particular language, without any associated coding.</rdfs:comment>
+    <rdfs:label>PLAIN_TEXT</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PARTICIPATION">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:comment>Used to represent any participation of a Party (e.g. any Actor or Role) in some activity, e.g. assisting nurse. Can be used to record past or  future participations. Should not be used in place of more permanent relationships between demographic entities. </rdfs:comment>
+    <rdfs:label>PARTICIPATION</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/QUANTIFIED">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/ORDERED_VALUE"/>
+    <rdfs:comment>An abstract class defining the concept of true quantified values, i.e. values which are not only ordered, but which have a precise magnitude.</rdfs:comment>
+    <rdfs:label>QUANTIFIED</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/MULTIMEDIA">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/ENCAPSULATED"/>
+    <rdfs:comment>A specialisation of ENCAPSULATED for audiovisual and biosignal types. Includes further metadata relating to multimedia types which are not applicable to other subtypes of ENCAPSULATED.</rdfs:comment>
+    <rdfs:label>MULTIMEDIA</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ORDINAL">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/ORDERED_VALUE"/>
+    <rdfs:comment>Used to represent model rankings and scores, e.g. pain, Apgar values, where there is a) implied ordering, b) no implication that the distance between each value is constant, and c) the total number of values is finite. Note that although the term  'ordinal' in mathematics means natural numbers only, here any integer is allowed, since negative and zero values are often used by medical professionals for values around a neutral point. Examples of sets of ordinal values:     -3, -2, -1, 0, 1, 2, 3 -- reflex response values     0, 1, 2                       -- Apgar values This class is used for recording any clinical datum which is customarily recorded using symbolic values. Example: the results on a urinalysis strip, e.g. {neg, trace, +, ++, +++} are used for leucocytes, protein, nitrites etc; for non-haemolysed blood {neg, trace, moderate}; for haemolysed blood small, moderate, large}. </rdfs:comment>
+    <rdfs:label>ORDINAL</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/INTERVAL_VALUE">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/DATA_VALUE"/>
+    <rdfs:comment>Generic class defining an interval (i.e. range) of a comparable type. An interval is used to define intervals of dates, times, quantities and so on. The type parameter, T, must be a descendant of the type ORDERED, which is necessary (but not sufficient) for instances to be compared (strictly_comparable is also needed). Without the INTERVAL class, quite a few more classes would be needed to express logical intervals, namely interval versions of all the date/time classes, and of quantity classes. Further, it allows the semantics of intervals to be stated in one place unequivocally, including the conditions for strict comparison.</rdfs:comment>
+    <rdfs:label>INTERVAL_VALUE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/RM">
+    <rdfs:label>CIMI Reference Model</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://rdf.cdisc.org/mms#AdministeredItem"/>    
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/ROLE">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://opencimi.org/rm/PARTY"/>
+    </rdfs:subClassOf>
+    <rdfs:comment>A generic description of a role performed by an actor. The role corresponds to a competency of the party. Roles are used to define the responsibilities undertaken by a party for a purpose. Roles should have credentials qualifying the performer to perform the role.</rdfs:comment>
+    <rdfs:label>ROLE</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://opencimi.org/rm/PARTY">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:comment>An ancestor of all party types, including real world entities and their roles. A party is any entity which can participate in an activity. The name attribute inherited from LOCATABLE is used to indicate the actual type of the party (note that the actual names, i.e. identities of parties are indicated in the identities attribute, not thename attribute).</rdfs:comment>
+    <rdfs:label>PARTY</rdfs:label>
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/LINK.meaning">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/TEXT"/>
+    <rdfs:comment>Used to describe the relationship between the source and the target of the link (usually in clinical terms) - such as  the relationship between test results and an order,  follow-up to a consultation and so on. The meaning of each link falls under one of the following categories: generic, documenting and reporting, organisational,  clinical , circumstantial , and view management .</rdfs:comment>
+    <rdfs:domain>
+      <rdf:Description rdf:about="http://opencimi.org/rm/LINK">
+        <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/RM"/>
+      </rdf:Description>
+    </rdfs:domain>
+    <rdfs:label>meaning</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/MULTIMEDIA.media_type">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>Data media type coded from the IANA MIME types code set. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/MULTIMEDIA"/>
+    <rdfs:label>media_type</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTY_RELATIONSHIP.type">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The detailed description of the relationship</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTY_RELATIONSHIP"/>
+    <rdfs:label>type</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/TEXT.language">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>An optional indicator of the localised language in which the value is written. Only used when either the text object is in a different language from the enclosing ENTRY, or the text object is being used outside of an ENTRY or other enclosing structure which indicates the language. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/TEXT"/>
+    <rdfs:label>language</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/ITEM_GROUP.structure_type">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>Defines the structural organization of a CLUSTER and its contained CLUSTERs and/or ELEMENTs (e.g. 'List', 'Table').</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ITEM_GROUP"/>
+    <rdfs:label>structure_type</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTICIPATION.function">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The function of the Party in this participation. Please note that a given party might participate in more than one way in a particular activity.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTICIPATION"/>
+    <rdfs:label>function</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTY_RELATIONSHIP.details">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ITEM"/>
+    <rdfs:comment>The detailed description of the relationship.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTY_RELATIONSHIP"/>
+    <rdfs:label>details</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTY.details">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ITEM"/>
+    <rdfs:comment>All other details for this party. These details are usually archetyped.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTY"/>
+    <rdfs:label>details</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/IDENTIFIER.type">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The identifier type, such as prescription id, or  Social Security Number.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/IDENTIFIER"/>
+    <rdfs:label>type</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PROPORTION.type">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>Indicates the semantic type of the proportion. Valid values include: ratio, unitary, percent, fraction, integer_fraction</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PROPORTION"/>
+    <rdfs:label>type</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/TERM_MAPPING.purpose">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The purpose of the mapping e.g.  automated data mining ,  billing, interoperability.</rdfs:comment>
+    <rdfs:domain>
+      <rdf:Description rdf:about="http://opencimi.org/rm/TERM_MAPPING">
+        <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/RM"/>
+      </rdf:Description>
+    </rdfs:domain>
+    <rdfs:label>purpose</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARSABLE.formalism">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The name of the formalism, e.g.  GLIF 1.0, Proforma.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARSABLE"/>
+    <rdfs:label>formalism</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/ORDINAL.symbol">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:comment>The coded textual representation of this value in the enumeration, which may be strings made from  + symbols, or other enumerations of terms such as  mild ,  moderate ,  severe , or even the same number series as the values, e.g.  1 ,  2 ,  3 .</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ORDINAL"/>
+    <rdfs:label>symbol</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/MULTIMEDIA.uri">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/URI_VALUE"/>
+    <rdfs:comment>URI reference to electronic information stored outside the record as a file, database entry etc, if supplied as a reference. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/MULTIMEDIA"/>
+    <rdfs:label>uri</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/LOCATABLE.uid">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The runtime id of an instance of the locatable.It is up to the implementer. When instance generated from eCore -&amp;gt; Java. Java has inherent id.instance_id has to be globally unique in a certain scope.e.g. uid(oid), guid, uri or url.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:label>uid</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/QUANTITY.precision">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:comment>The precision to which the value of the quantity is expressed, as a number of significant figures.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/QUANTITY"/>
+    <rdfs:label>precision</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/CODED_TEXT.code">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The key used by the terminology service to identify a concept or coordination of concepts. This string is most likely parsable inside the terminology service, but nothing can be assumed about its syntax outside that context. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:label>code</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/CODED_TEXT.terminology_version">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The version of the terminology from which the codes in the code_string were extracted.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:label>terminology_version</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/IDENTIFIER.id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The identifier value. Often structured, according to the definition of the issuing authority's rules. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/IDENTIFIER"/>
+    <rdfs:label>id</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/CODED_TEXT.term_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The unique identifier of the term associated with the code_string from the given terminology. In SNOMED CT this is used to record the Description Id of the Term.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:label>term_id</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/MULTIMEDIA.data">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#byte"/>
+    <rdfs:comment>The actual data that represents the multimedia item. If the multimedia item has a uri, then this is the data found at this uri.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/MULTIMEDIA"/>
+    <rdfs:label>data</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/YESNO.value">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:comment>Boolean value of this item. Actual values may be language or implementation dependent.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/YESNO"/>
+    <rdfs:label>value</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/PROPORTION.precision">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:comment>The precision  to  which  the  numerator and denominator values of  the proportion are expressed, in terms of the number  of decimal places. The value 0 implies an integral quantity. The value -1 implies no limit, i.e. any number of decimal places. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PROPORTION"/>
+    <rdfs:label>precision</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/CODED_TEXT.terminology_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The terminology from which the codes in the code_string were extracted.An identifier for a terminology system, such as accessed via a terminology query service. In this class, the value attribute identifies the Terminology in the terminology service, e.g. SNOMED-CT. A terminology is assumed to be in a particular language, which must be explicitly specified. Lexical form:    name [  (' version  )' ] </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:label>terminology_id</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/TERM_MAPPING.match">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The relative accuracy with which the target term matches with the respective mapped text item. Valid values include:     &amp;gt;': the mapping is to a broader term, e.g. original text = arbovirus infection , target =  viral infection       =': the mapping is equivalent to the original item      &amp;lt;': the mapping is to a narrower term, e.g. original text = diabetes , mapping =  diabetes mellitus .      ?': the kind of mapping is unknown. The first three values are taken from the ISO standards 2788 ( Guide to Establishment and development of monolingual thesauri ) and 5964 (Guide to Establishment and development of multilingual thesauri ). </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/TERM_MAPPING"/>
+    <rdfs:label>match</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/AMOUNT.accuracy">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment>Accuracy of the measurement, expressed either as a half-range percent value (i.e. accuracy_is_percent = True) or a half-range quantity. A value of 0 means that accuracy was not recorded. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/AMOUNT"/>
+    <rdfs:label>accuracy</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/QUANTITY.value">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment>The numeric size of the quantity.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/QUANTITY"/>
+    <rdfs:label>value</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/AMOUNT.accuracy_is_percent">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:comment>If True, this indicates that when this object was created, accuracy was recorded as a percent value; if False, as an absolute quantity value.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/AMOUNT"/>
+    <rdfs:label>accuracy_is_percent</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/IDENTIFIER.issuer">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>Authority which issues the kind of id used in the id field of this object. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/IDENTIFIER"/>
+    <rdfs:label>issuer</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/ARCHETYPED.archetype_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>Globally unique archetype identifier. The identifier for archetypes. Ideally these would identify globally unique archetypes. Lexical form: rm_originator  -' rm_name  -' rm_entity  .' concept_name { -' specialisation }*  .v' number </rdfs:comment>
+    <rdfs:domain>
+      <rdf:Description rdf:about="http://opencimi.org/rm/ARCHETYPED">
+        <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/RM"/>
+      </rdf:Description>
+    </rdfs:domain>
+    <rdfs:label>archetype_id</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/LOCATABLE.archetype_node_id">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The design-time archetype id of this node taken from its generating archetype This archetype node id is used to build archetype paths. It is always in the form of an at  code, e.g. at0005 . This value enables a standardised name for this node to be generated, by referring to the generating archetype local ontology. At an archetype root point, the value of this attribute is always the stringified form of the archetype_id found in the archetype_details object. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:label>archetype_node_id</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/QUANTIFIED.value_status">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The optional status of the magnitude with possible values:      =  :   magnitude is a point value      &amp;lt;  :   value is &amp;lt; magnitude      &amp;gt;  :   value is &amp;gt; magnitude      &amp;lt;=  : value is &amp;lt;= magnitude      &amp;gt;=  : value is &amp;gt;= magnitude      ~  :   value is approximately magnitude If not present, meaning is  = . </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/QUANTIFIED"/>
+    <rdfs:label>value_status</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/CODED_TEXT.term">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The string of characters associated with the code_string from the given terminology. This only needs to be provided if it is different from TEXT.value.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:label>term</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/MULTIMEDIA.alternate_text">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#byte"/>
+    <rdfs:comment>Text to display in lieu of multimedia display/replay.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/MULTIMEDIA"/>
+    <rdfs:label>alternate_text</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/LOCATABLE.name">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The runtime name of this fragment, used to build runtime paths. This is the term provided via a clinical application or batch process to name this EHR construct. Its retention in the EHR faithfully preserves the original label by which this entry was known to end users. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:label>name</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/PARSABLE.value">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>The string which can be parsed according to the given formalism. The value may validly be empty in some syntaxes.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARSABLE"/>
+    <rdfs:label>value</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/ORDINAL.value">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment>Value in ordered enumeration of values. Any integer value can be used. </rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ORDINAL"/>
+    <rdfs:label>value</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/ARCHETYPED.rm_version">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>Version of the CIMI reference model used to create this object. Expressed in terms of the release version string, e.g.  1.0 , 1.2.4 .</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ARCHETYPED"/>
+    <rdfs:label>rm_version</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/DURATION.duration_text">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment>A string representing an ISO8601 duration.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/DURATION"/>
+    <rdfs:label>duration_text</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/PROPORTION.numerator">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment>The numerator of the ratio.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PROPORTION"/>
+    <rdfs:label>numerator</rdfs:label>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://opencimi.org/rm/PROPORTION.denominator">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:comment>The denominator of the ratio.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PROPORTION"/>
+    <rdfs:label>denominator</rdfs:label>
+  </owl:DatatypeProperty>
+  <rdf:Description rdf:about="http://opencimi.org/rm/String">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://opencimi.org/rm/Boolean">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://opencimi.org/rm/Integer">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://opencimi.org/rm/Character">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://opencimi.org/rm/Byte">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://opencimi.org/rm/Real">
+    <rdfs:subClassOf rdf:resource="http://opencimi.org/rm/Primitive_Types"/>
+  </rdf:Description>
+ <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTY_RELATIONSHIP.target">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/PARTY"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTY_RELATIONSHIP"/>
+    <rdfs:label>target</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/ACTOR.role">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ROLE"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ACTOR"/>
+    <rdfs:label>role</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/TERM_MAPPING.target">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/CODED_TEXT"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/TERM_MAPPING"/>
+    <rdfs:label>target</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/TEXT.mapping">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/TERM_MAPPING"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/TEXT"/>
+    <rdfs:label>mapping</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/LOCATABLE.archetype_details">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ARCHETYPED"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:label>archetype_details</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTY.relationship">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/PARTY_RELATIONSHIP"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTY"/>
+    <rdfs:label>relationship</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/ITEM.participation">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/PARTICIPATION"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ITEM"/>
+    <rdfs:label>participation</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/INTERVAL_VALUE.upper_T_">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ORDERED_VALUE"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/INTERVAL_VALUE"/>
+    <rdfs:label>upper_T_</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/LINK.target">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LINK"/>
+    <rdfs:label>target</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/LOCATABLE.link">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/LINK"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/LOCATABLE"/>
+    <rdfs:label>link</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/ITEM_GROUP.item">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ITEM"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/ITEM_GROUP"/>
+    <rdfs:label>item</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/INTERVAL_VALUE.lower_T_">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/ORDERED_VALUE"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/INTERVAL_VALUE"/>
+    <rdfs:label>lower_T_</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://opencimi.org/rm/PARTICIPATION.party">
+    <rdfs:range rdf:resource="http://opencimi.org/rm/PARTY"/>
+    <rdfs:domain rdf:resource="http://opencimi.org/rm/PARTICIPATION"/>
+    <rdfs:label>party</rdfs:label>
+  </owl:ObjectProperty>  
+</rdf:RDF>
