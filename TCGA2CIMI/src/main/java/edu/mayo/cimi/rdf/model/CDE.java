@@ -31,4 +31,15 @@ public class CDE extends Top
     {
         return "CDE:" + name;
     }
+
+    public String getRDFName() throws ModelException
+    {
+        if (!ModelUtils.isNull(this.longName))
+            return ModelUtils.removeNonAlphaNum(this.longName);
+
+        if (!ModelUtils.isNull(this.name))
+            return ModelUtils.removeNonAlphaNum(this.name);
+
+        return getId();
+    }
 }

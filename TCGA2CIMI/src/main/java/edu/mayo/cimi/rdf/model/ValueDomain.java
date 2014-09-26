@@ -25,4 +25,12 @@ public class ValueDomain extends Top
     {
         return "VD:" + name;
     }
+
+    public String getRDFName() throws ModelException
+    {
+        if (!ModelUtils.isNull(this.name))
+            return ModelUtils.removeNonAlphaNum(this.name);
+
+        return getId();
+    }
 }

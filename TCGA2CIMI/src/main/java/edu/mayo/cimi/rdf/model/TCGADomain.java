@@ -55,4 +55,12 @@ public class TCGADomain extends Top
     {
         return null;
     }
+
+    public String getRDFName() throws ModelException
+    {
+        if (!ModelUtils.isNull(this.domainName))
+            return ModelUtils.removeNonAlphaNum(this.domainName);
+
+        return getId();
+    }
 }

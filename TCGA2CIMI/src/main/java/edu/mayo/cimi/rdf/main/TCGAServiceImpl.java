@@ -567,6 +567,22 @@ public class TCGAServiceImpl
             for (ObjectClass oc : objectClasses.values())
             {
                 content += "\n" + oc.getTTL();
+
+                for (String cdk : oc.cdeKeys)
+                {
+                    String propKey = cdes.get(cdk).objectPropertyKey;
+                    if (propKey == null)
+                        continue;
+
+                    ObjectProperty prop = objectProperties.get(propKey);
+
+                    if (prop == null)
+                        continue;
+
+                    content += "\ncimi:ITEM_GROUP.item cacde:" + prop.getRDFName() + " ;";
+                }
+
+                content += "\n.";
             }
 
             for (ObjectProperty op : objectProperties.values())

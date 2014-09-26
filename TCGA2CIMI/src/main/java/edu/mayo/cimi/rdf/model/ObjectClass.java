@@ -30,6 +30,17 @@ public class ObjectClass extends Top
             cdeKeys.add(cdeKey);
     }
 
+    public String getRDFName() throws ModelException
+    {
+        if (!ModelUtils.isNull(this.longName))
+            return ModelUtils.removeNonAlphaNum(this.longName);
+
+        if (!ModelUtils.isNull(this.prefName))
+            return ModelUtils.removeNonAlphaNum(this.prefName);
+
+        return getId();
+    }
+
     public String getTTL()
     {
         return  "\n<http://rdf.cacde-qa.org/cacde/element#" + ModelUtils.removeNonAlphaNum(this.longName) + ">" +

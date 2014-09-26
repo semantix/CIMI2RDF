@@ -90,7 +90,7 @@ public class RDFStoreQueries
                 "                ?valuedomain cde:ValueDomainType ?valueDomainType . " +
                 "                ?valuedomain cde:LongName ?valueDomainName . " +
                 "        } " +
-                "    } LIMIT 500";
+                "    }";
 
         return getQueryResults(query);
     }

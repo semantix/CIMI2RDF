@@ -34,4 +34,15 @@ public class ObjectProperty extends Top
     {
         return "PROP:" + prefName;
     }
+
+    public String getRDFName() throws ModelException
+    {
+        if (!ModelUtils.isNull(this.longName))
+            return ModelUtils.removeNonAlphaNum(this.longName);
+
+        if (!ModelUtils.isNull(this.prefName))
+            return ModelUtils.removeNonAlphaNum(this.prefName);
+
+        return getId();
+    }
 }
