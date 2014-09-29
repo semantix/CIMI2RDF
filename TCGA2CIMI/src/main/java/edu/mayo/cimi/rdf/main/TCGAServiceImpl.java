@@ -51,8 +51,33 @@ public class TCGAServiceImpl
                 tcgaimpl.updateObjectClass(objcl, xml);
             }
 
+            Vector<String> uniqueCDEsUsedInAllDomains = new Vector<String>();
+
+            for (TCGADomain dom : tcgaimpl.tags.values())
+                for (TCGADomainEntry entry : dom.entries.values())
+                    if (!uniqueCDEsUsedInAllDomains.contains(entry.cdeKey))
+                        uniqueCDEsUsedInAllDomains.add(entry.cdeKey);
+
+            System.out.println("Unique TCGA Domains = " + tcgaimpl.tags.keySet().size());
+            System.out.println("Unique CDEs (for all Domains) = " + uniqueCDEsUsedInAllDomains.size());
+            System.out.println("Unique Total CDEs = " + tcgaimpl.cdes.keySet().size());
+            System.out.println("Unique Object Classes = " + tcgaimpl.objectClasses.keySet().size());
+            System.out.println("Unique Properties = " + tcgaimpl.objectProperties.keySet().size());
+            System.out.println("Unique Value Domains = " + tcgaimpl.valueDomains.keySet().size());
+
+            int evdcount = 0;
+            for (ValueDomain vds : tcgaimpl.valueDomains.values())
+                if (vds.isEnumerated)
+                    evdcount++;
+
+            System.out.println("Unique Enumerated Value Domains = " + evdcount);
+
+
+
             String turtleFileName = "TCGA_DataElements.ttl";
             System.out.println("Creating Turtle File (TTL)" + turtleFileName);
+
+
             tcgaimpl.createTTLFile(turtleFileName);
 
             // Creates report for all domains.
@@ -583,23 +608,46 @@ public class TCGAServiceImpl
             for (TCGADomain dom : tags.values())
             {
                 domainContent.append(dom.getTTL());
-                Vector<String> uniqueOCsForthisdomain = new Vector<String>();
+                Vector<String> uniqueCDEsForthisdomain = new Vector<String>();
+                Vector<String> uniqueOCssForthisdomain = new Vector<String>();
 
                 for (TCGADomainEntry entry : dom.entries.values())
                 {
                      domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + cdes.get(entry.cdeKey).getRDFName() + " ;");
 
-                    if (!uniqueOCsForthisdomain.contains(cdes.get(entry.cdeKey).objectClassKey))
-                        uniqueOCsForthisdomain.add(cdes.get(entry.cdeKey).objectClassKey);
+                    if (!uniqueCDEsForthisdomain.contains(entry.cdeKey))
+                        uniqueCDEsForthisdomain.add(entry.cdeKey);
+                    if (!uniqueOCssForthisdomain.contains(cdes.get(entry.cdeKey).objectClassKey))
+                        uniqueOCssForthisdomain.add(cdes.get(entry.cdeKey).objectClassKey);
                 }
 
                 domainContent.append("\n.");
 
-                if (!uniqueOCsForthisdomain.isEmpty())
+                if (!uniqueCDEsForthisdomain.isEmpty())
                 {
                     domainContent.append(dom.getTTL());
 
-                    for (String ockey : uniqueOCsForthisdomain)
+                    for (String cdeK : uniqueCDEsForthisdomain)
+                    {
+                        CDE cdei = cdes.get(cdeK);
+
+                        if (cdei == null)
+                        {
+                            System.out.println("CDE is null for " + cdeK);
+                            continue;
+                        }
+
+                        domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + cdei.getRDFName() + " ;");
+                    }
+                }
+
+                domainContent.append("\n.");
+
+                if (!uniqueOCssForthisdomain.isEmpty())
+                {
+                    domainContent.append(dom.getTTL());
+
+                    for (String ockey : uniqueOCssForthisdomain)
                     {
                         ObjectClass oci = objectClasses.get(ockey);
 
@@ -628,8 +676,8 @@ public class TCGAServiceImpl
             for (ObjectClass oc : objectClasses.values())
             {
                 HashMap<String, Vector<String>> vdKeysInContext = new HashMap<String, Vector<String>>();
-                if (!printOCs.contains(oc.getId()))
-                {
+                //if (!printOCs.contains(oc.getId()))
+                //{
                     OCcontent.append("\n" + oc.getTTL());
 
                     for (String cdk : oc.cdeKeys)
@@ -655,13 +703,13 @@ public class TCGAServiceImpl
                     }
 
                     OCcontent.append("\n.");
-                    printOCs.add(oc.getId());
-                }
+                    //printOCs.add(oc.getId());
+                //}
 
                 for (String pk : vdKeysInContext.keySet())
                 {
-                    if (!printPrs.contains(pk))
-                    {
+                    //if (!printPrs.contains(pk))
+                    //{
                         ObjectProperty op = objectProperties.get(pk);
                         boolean isEnum = true;
                         String contextOC = oc.getRDFName();
@@ -676,8 +724,9 @@ public class TCGAServiceImpl
                         }
 
                         propertyContent.append(op.getTTL(isEnum, contextOC,vdrs));
-                        printPrs.add(op.getId());
-                    }
+                        if (!printPrs.contains(pk))
+                            printPrs.add(pk);
+                    //}
                 }
             }
 
