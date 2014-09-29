@@ -8,5 +8,5 @@ public abstract class Top
     public String id;
     public abstract String getId() throws ModelException;
 
-    public abstract String getTTL();
+    public abstract String getTTL() throws ModelException;
 }

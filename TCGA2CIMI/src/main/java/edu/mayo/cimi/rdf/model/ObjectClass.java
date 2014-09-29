@@ -41,9 +41,9 @@ public class ObjectClass extends Top
         return getId();
     }
 
-    public String getTTL()
+    public String getTTL() throws ModelException
     {
-        return  "\n<http://rdf.cacde-qa.org/cacde/element#" + ModelUtils.removeNonAlphaNum(this.longName) + ">" +
+        return  "\n<http://rdf.cacde-qa.org/cacde/element#" + this.getRDFName() + ">" +
                 "\nrdf:type cimi:ITEM_GROUP ;" +
                 "\nrdf:type mms:DataElement ;" +
                 "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +

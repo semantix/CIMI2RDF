@@ -27,9 +27,17 @@ public class CDE extends Top
         return id;
     }
 
-    public String getTTL()
+    public String getTTL() throws ModelException
     {
-        return "CDE:" + name;
+
+        String val =  "\n<http://rdf.cadsr.org/cde#" + this.getRDFName() + "> " +
+                "\nrdf:type cimi:ELEMENT;" +
+                "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +
+                //"\nrdfs:description \"" + this.definition + "\"^^xsd:string ;" +
+                "\nrdfs:label \"" + this.publicId + "\"^^xsd:string .";
+
+        return val;
+
     }
 
     public String getRDFName() throws ModelException

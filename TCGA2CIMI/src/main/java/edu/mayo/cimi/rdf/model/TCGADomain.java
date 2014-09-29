@@ -51,9 +51,10 @@ public class TCGADomain extends Top
         return ucde;
     }
 
-    public String getTTL()
+    public String getTTL() throws ModelException
     {
-        return null;
+        return  "\n<http://tcga.nci.nih.gov/BCR/DataDictionary#" + this.getRDFName() + ">" +
+            "\nrdf:type cimi:ITEM_GROUP ;";
     }
 
     public String getRDFName() throws ModelException

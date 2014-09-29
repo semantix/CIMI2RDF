@@ -109,7 +109,7 @@ public class TCGAServiceImpl
                 {
                     cde = new CDE(pubId);
                     cde.name = longName;
-                    cde.longName = cdeLn;
+                    cde.longName = cdeLn.replaceAll("java.lang.String", "");
                     cde.definition = defn;
 
                     // Add Object Class Key
@@ -147,7 +147,11 @@ public class TCGAServiceImpl
                     {
                         vd = new ValueDomain(vdName);
                         vd.isEnumerated = ("enumerated".equalsIgnoreCase(vdType.trim()));
+
                     }
+
+                    vd.addUsage(cde.objectClassKey);
+
                     valueDomains.put(vd.getId(), vd);
 
                     cde.valueDomainKey = vd.getId();
@@ -193,7 +197,7 @@ public class TCGAServiceImpl
                 {
                     cde = new CDE(pubId);
                     cde.name = cdeLn;
-                    cde.longName = cdeLn;
+                    cde.longName = cdeLn.replaceAll("java.lang.String", "");
                     cde.definition = defn;
 
                     objClass.addCDE(cde.getId());
@@ -224,6 +228,8 @@ public class TCGAServiceImpl
                     vd = new ValueDomain(vdName);
                     vd.isEnumerated = ("enumerated".equalsIgnoreCase(vdType.trim()));
                 }
+
+                vd.addUsage(cde.objectClassKey);
 
                 valueDomains.put(vd.getId(), vd);
 
@@ -554,7 +560,12 @@ public class TCGAServiceImpl
         }
     }
 
-    public void createTTLFile(String fileName)
+    private Vector<String> printOCs = new Vector<String>();
+    private Vector<String> printPrs = new Vector<String>();
+    private Vector<String> printVDs = new Vector<String>();
+    private Vector<String> printCDEs = new Vector<String>();
+
+    public void createTTLFile(String fileName) throws ModelException
     {
         String prefixFileName = "TCGA_TTL_PREFIX.ttl";
 
@@ -562,37 +573,166 @@ public class TCGAServiceImpl
             File prefFl = new File(prefixFileName);
             String pref = FileUtils.getContents(prefFl);
 
-            String content = "\n";
+            StringBuffer allContent = new StringBuffer(pref + "\n");
+
+            StringBuffer OCcontent = new StringBuffer("\n");
+
+
+            //Pattern 1
+            StringBuffer domainContent = new StringBuffer("");
+            for (TCGADomain dom : tags.values())
+            {
+                domainContent.append(dom.getTTL());
+                Vector<String> uniqueOCsForthisdomain = new Vector<String>();
+
+                for (TCGADomainEntry entry : dom.entries.values())
+                {
+                     domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + cdes.get(entry.cdeKey).getRDFName() + " ;");
+
+                    if (!uniqueOCsForthisdomain.contains(cdes.get(entry.cdeKey).objectClassKey))
+                        uniqueOCsForthisdomain.add(cdes.get(entry.cdeKey).objectClassKey);
+                }
+
+                domainContent.append("\n.");
+
+                if (!uniqueOCsForthisdomain.isEmpty())
+                {
+                    domainContent.append(dom.getTTL());
+
+                    for (String ockey : uniqueOCsForthisdomain)
+                    {
+                        ObjectClass oci = objectClasses.get(ockey);
+
+                        if (oci == null)
+                        {
+                            System.out.println("OC is null for " + ockey);
+                            continue;
+                        }
+
+                        domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + oci.getRDFName() + " ;");
+                    }
+                }
+
+                domainContent.append("\n.");
+            }
+
+            StringBuffer cdeContent = new StringBuffer("");
+            for (CDE cde : cdes.values())
+            {
+                cdeContent.append(cde.getTTL());
+            }
+
+            StringBuffer propertyContent = new StringBuffer("");
+            StringBuffer vdContent = new StringBuffer("");
 
             for (ObjectClass oc : objectClasses.values())
             {
-                content += "\n" + oc.getTTL();
-
-                for (String cdk : oc.cdeKeys)
+                HashMap<String, Vector<String>> vdKeysInContext = new HashMap<String, Vector<String>>();
+                if (!printOCs.contains(oc.getId()))
                 {
-                    String propKey = cdes.get(cdk).objectPropertyKey;
-                    if (propKey == null)
-                        continue;
+                    OCcontent.append("\n" + oc.getTTL());
 
-                    ObjectProperty prop = objectProperties.get(propKey);
+                    for (String cdk : oc.cdeKeys)
+                    {
+                        String propKey = cdes.get(cdk).objectPropertyKey;
+                        if (propKey == null)
+                            continue;
 
-                    if (prop == null)
-                        continue;
+                        ObjectProperty prop = objectProperties.get(propKey);
 
-                    content += "\ncimi:ITEM_GROUP.item cacde:" + prop.getRDFName() + " ;";
+                        if (prop == null)
+                            continue;
+
+                        Vector<String> vdsInc = vdKeysInContext.get(propKey);
+                        if (vdsInc == null)
+                            vdsInc = new Vector<String>();
+
+                        if (!vdsInc.contains(cdes.get(cdk).valueDomainKey))
+                            vdsInc.add(cdes.get(cdk).valueDomainKey);
+
+                        vdKeysInContext.put(propKey, vdsInc);
+                        OCcontent.append("\ncimi:ITEM_GROUP.item cacde:" + prop.getRDFName() + " ;");
+                    }
+
+                    OCcontent.append("\n.");
+                    printOCs.add(oc.getId());
                 }
 
-                content += "\n.";
+                for (String pk : vdKeysInContext.keySet())
+                {
+                    if (!printPrs.contains(pk))
+                    {
+                        ObjectProperty op = objectProperties.get(pk);
+                        boolean isEnum = true;
+                        String contextOC = oc.getRDFName();
+                        Vector<String> vdrefs = vdKeysInContext.get(pk);
+                        String[] vdrs = new String[vdrefs.size()];
+
+                        int i=0;
+                        for (String vdk : vdrefs)
+                        {
+                            isEnum = valueDomains.get(vdk).isEnumerated;
+                            vdrs[i++] = valueDomains.get(vdk).getRDFName();
+                        }
+
+                        propertyContent.append(op.getTTL(isEnum, contextOC,vdrs));
+                        printPrs.add(op.getId());
+                    }
+                }
             }
 
             for (ObjectProperty op : objectProperties.values())
             {
-                content += "\n" + op.getTTL();
+                if (!printPrs.contains(op.getId()))
+                {
+                    boolean isEnum = true;
+                    String contextOC = null;
+                    String vdKey = null;
+
+                    for (String cdKey : op.cdeKeys)
+                    {
+                        CDE cd = cdes.get(cdKey);
+                        if (cd == null)
+                            continue;
+
+                        vdKey = cd.valueDomainKey;
+                        isEnum = valueDomains.get(vdKey).isEnumerated;
+                        contextOC = objectClasses.get(cd.objectClassKey).getRDFName();
+                        break;
+                    }
+
+                    String[] vds = {valueDomains.get(vdKey).getRDFName()};
+                    propertyContent.append(op.getTTL(isEnum, contextOC, vds));
+                    printPrs.add(op.getId());
+                }
             }
 
-            content = pref + content;
 
-            FileUtils.createFileWithContents(fileName, content);
+
+            for (ValueDomain vdom : valueDomains.values())
+            {
+                if (!printVDs.contains(vdom.getId()))
+                {
+                    vdContent.append(vdom.getTTL());
+
+                    for (String usage : vdom.usageByObjectClasses)
+                        vdContent.append("\nmms:context cacde:" + objectClasses.get(usage).getRDFName() + " ;");
+
+                    vdContent.append("\n.");
+                    printVDs.add(vdom.getId());
+                }
+            }
+
+            // Pattern 1
+            allContent.append(domainContent).append(cdeContent);
+
+            //Pattern 2
+            allContent.append("\n\n")
+                    .append(OCcontent)
+                    .append(propertyContent)
+                    .append(vdContent);
+
+            FileUtils.createFileWithContents(fileName, allContent.toString());
         }
         catch(Exception e)
         {
