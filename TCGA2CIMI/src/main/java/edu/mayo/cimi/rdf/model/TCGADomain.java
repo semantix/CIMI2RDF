@@ -53,7 +53,7 @@ public class TCGADomain extends Top
 
     public String getTTL() throws ModelException
     {
-        return  "\n<http://tcga.nci.nih.gov/BCR/DataDictionary#" + this.getRDFName() + ">" +
+        return  "\n\n<http://tcga.nci.nih.gov/BCR/DataDictionary#" + this.getRDFName() + ">" +
             "\nrdf:type cimi:ITEM_GROUP ;";
     }
 

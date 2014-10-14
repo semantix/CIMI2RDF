@@ -11,6 +11,7 @@ public class ValueDomain extends Top
 {
     public String name;
     public boolean isEnumerated;
+    public String vdDatatype;
 
     public Vector<String> usageByObjectClasses = new Vector<String>();
 
@@ -40,7 +41,7 @@ public class ValueDomain extends Top
     {
         String text =  "\n<http://rdf.cacde-qa.org/cacde/element#" + this.getRDFName() + ">" +
                 "\nrdf:type cimi:ELEMENT ;"+
-                "\nrdf:type mms:DataElement ;" +
+                //"\nrdf:type mms:DataElement ;" +
                 "\nrdfs:label \"" + this.name + "\"^^xsd:string ;" +
                 "\nskos:definition \"" + this.name + "\"^^xsd:string ;" +
                 "\nmms:dataElementDescription \"" + this.name + "\"^^xsd:string ;" +
@@ -48,10 +49,17 @@ public class ValueDomain extends Top
                 "\nmms:dataElementName \"" + this.name + "\"^^xsd:string ;";
 
         if (this.isEnumerated)
-                text += "\nmms:dataElementType \"Enumerated\"^^xsd:string ;" ;
+        {
+            text += "\nmms:dataElementType \"Enumerated\"^^xsd:string ;";
+            text += "\ncimi:Element.value cimi:CODED_TEXT;";
+            text += "\nrdf:type mms:EnumeratedValueDomain ;";
+        }
         else
-                text += "\nmms:dataElementType \"NonEnumerated\"^^xsd:string ;" ;
-
+        {
+            text += "\nmms:dataElementType \"NonEnumerated\"^^xsd:string ;";
+            text += "\ncimi:Element.value cimi:" + getCIMIType(this.vdDatatype) + ";";
+            text += "\nrdf:type mms:ValueDomain ;";
+        }
         return text;
     }
 
@@ -61,5 +69,58 @@ public class ValueDomain extends Top
             return ModelUtils.removeNonAlphaNum(this.name);
 
         return getId();
+    }
+
+    public static String getCIMIType(String myType)
+    {
+
+        if(myType.equalsIgnoreCase("NUMBER"))
+            return "Real";
+        if(myType.equalsIgnoreCase("CHARACTER"))
+            return "Character";
+        if(myType.equalsIgnoreCase("DATETIME"))
+            return "DATE_TIME";
+        if(myType.equalsIgnoreCase("DATE/TIME"))
+            return "DATE_TIME";
+        if(myType.equalsIgnoreCase("DATE"))
+            return "DATE";
+        if(myType.equalsIgnoreCase("TIME"))
+            return "TIME";
+
+        if(myType.equalsIgnoreCase("ALPHANUMERIC"))
+            return "String";
+        if(myType.equalsIgnoreCase("java.lang.Integer"))
+            return "Integer";
+        if(myType.equalsIgnoreCase("java.lang.Long"))
+            return "Integer";
+        if(myType.equalsIgnoreCase("java.lang.Float"))
+            return "Real";
+        if(myType.equalsIgnoreCase("java.lang.Double"))
+            return "Real";
+        if(myType.equalsIgnoreCase("java.lang.Boolean"))
+            return "YESNO";
+        if(myType.equalsIgnoreCase("java.util.Date"))
+            return "DATE";
+        if(myType.equalsIgnoreCase("java.sql.Timestamp"))
+            return "DATE_TIME";
+        if(myType.equalsIgnoreCase("xsd:string"))
+            return "String";
+
+        if(myType.equalsIgnoreCase("java.lang.String"))
+            return "String";
+
+        if(myType.equalsIgnoreCase("String"))
+            return "String";
+
+        if(myType.startsWith("ISO"))
+            return "CODED_TEXT";
+
+        if(myType.startsWith("anyClass"))
+            return "URI_VALUE";
+
+        System.out.print("Could not map input value domain data type:" + myType);
+        System.out.println("Returning Type=String");
+
+        return "String";
     }
 }

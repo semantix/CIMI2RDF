@@ -71,7 +71,7 @@ public class RDFStoreQueries
     public String getObjectClassDetails(String objectClassPreferredName)
     {
         String query = getPrefixes() +
-                "select distinct ?publicId ?longname ?cdelongname ?objClassLongName ?objClassPrefName ?propLongName ?propPrefName ?valueDomainName ?valueDomainType " +
+                "select distinct ?publicId ?longname ?cdelongname ?objClassLongName ?objClassPrefName ?propLongName ?propPrefName ?valueDomainName ?valueDomainType ?vdDatatype " +
                 "    { " +
                 "        GRAPH <http://rdf.cadsr.org/cde>  " +
                 "        { " +
@@ -89,6 +89,7 @@ public class RDFStoreQueries
                 "                ?cde cde:VALUEDOMAIN ?valuedomain . " +
                 "                ?valuedomain cde:ValueDomainType ?valueDomainType . " +
                 "                ?valuedomain cde:LongName ?valueDomainName . " +
+                "                ?valuedomain cde:Datatype ?vdDatatype . " +
                 "        } " +
                 "    }";
 

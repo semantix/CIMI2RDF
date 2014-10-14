@@ -10,6 +10,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tcga: <http://tcga.nci.nih.gov/BCR/DataDictionary/> .
 @base <http://rdf.cacde-qa.org/cacde/element> .
 
 <http://rdf.cacde-qa.org/cacde/element> rdf:type owl:Ontology ;

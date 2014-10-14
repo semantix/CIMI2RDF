@@ -33,7 +33,7 @@ public class CDE extends Top
         String val =  "\n<http://rdf.cadsr.org/cde#" + this.getRDFName() + "> " +
                 "\nrdf:type cimi:ELEMENT;" +
                 "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +
-                //"\nrdfs:description \"" + this.definition + "\"^^xsd:string ;" +
+                "\nskos:altLabel \"" + this.name + "\"^^xsd:string ;" +
                 "\nrdfs:label \"" + this.publicId + "\"^^xsd:string .";
 
         return val;

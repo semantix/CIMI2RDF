@@ -31,6 +31,7 @@ public class ObjectProperty extends Top
     }
 
     private boolean isEnumerated;
+    private boolean isJavaType = false;
     private String context;
     private String[] vds;
     public String getTTL(boolean isEnumeratedp, String contextp, String[] vdsp) throws ModelException
@@ -39,6 +40,13 @@ public class ObjectProperty extends Top
         this.context = contextp;
         this.vds = vdsp;
 
+        isJavaType = false;
+
+        for (int i=0; i < vdsp.length;i++)
+            if ((vdsp[i].indexOf("java") != -1)||
+                    (vdsp[i].indexOf("xsd") != -1))
+                isJavaType = true;
+
         return this.getTTL();
     }
 
@@ -46,7 +54,7 @@ public class ObjectProperty extends Top
     {
         String targetType = "ITEM_GROUP";
 
-        if (!this.isEnumerated)
+        if ((!this.isEnumerated)||(this.isJavaType))
             targetType = "ELEMENT";
 
         String text =  "\n<http://rdf.cacde-qa.org/cacde/element#" + this.getRDFName() + ">" +

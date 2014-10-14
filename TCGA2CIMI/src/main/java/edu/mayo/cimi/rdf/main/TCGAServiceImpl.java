@@ -121,6 +121,7 @@ public class TCGAServiceImpl
                 String propPn = getValue(node, "propPrefName");
                 String vdName = getValue(node, "valueDomainName");
                 String vdType = getValue(node, "valueDomainType");
+                String vdDataType = getValue(node, "vdDataType");
 
                 /*System.out.println("Tag=" + domainName);
                 System.out.println("Study=" + study);
@@ -175,6 +176,7 @@ public class TCGAServiceImpl
 
                     }
 
+                    vd.vdDatatype = vdDataType;
                     vd.addUsage(cde.objectClassKey);
 
                     valueDomains.put(vd.getId(), vd);
@@ -214,6 +216,7 @@ public class TCGAServiceImpl
                 String propPn = getValue(node, "propPrefName");
                 String vdName = getValue(node, "valueDomainName");
                 String vdType = getValue(node, "valueDomainType");
+                String vdDataType = getValue(node, "vdDatatype");
 
                 isNewCDE = false;
                 CDE cde = cdes.get(ModelUtils.key(pubId));
@@ -255,6 +258,7 @@ public class TCGAServiceImpl
                 }
 
                 vd.addUsage(cde.objectClassKey);
+                vd.vdDatatype = vdDataType;
 
                 valueDomains.put(vd.getId(), vd);
 
@@ -605,6 +609,18 @@ public class TCGAServiceImpl
 
             //Pattern 1
             StringBuffer domainContent = new StringBuffer("");
+
+            // Top Root node
+            StringBuffer TCGADomainRootNodeText = new StringBuffer("\n<http://tcga.nci.nih.gov/BCR/DataDictionary#TCGADomain>" +
+                    "\nrdf:type cimi:ITEM_GROUP ;" +
+                    "\nrdf:type mms:DataElement ;" +
+                    "\nrdfs:label \"TCGADomain\"^^xsd:string ;" +
+                    "\nskos:definition \"TCGADomain\"^^xsd:string ;" +
+                    "\nmms:dataElementDescription \"TCGADomain\"^^xsd:string ;" +
+                    "\nmms:dataElementLabel \"TCGADomain\"^^xsd:string ;" +
+                    "\nmms:dataElementName \"TCGADomain\"^^xsd:string ;" +
+                    "\nmms:dataElementType \"TCGADomain\"^^xsd:string ;");
+
             for (TCGADomain dom : tags.values())
             {
                 domainContent.append(dom.getTTL());
@@ -613,19 +629,20 @@ public class TCGAServiceImpl
 
                 for (TCGADomainEntry entry : dom.entries.values())
                 {
-                     domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + cdes.get(entry.cdeKey).getRDFName() + " ;");
+                     //domainContent.append("\ncimi:ITEM_GROUP.item cacde:" + cdes.get(entry.cdeKey).getRDFName() + " ;");
 
                     if (!uniqueCDEsForthisdomain.contains(entry.cdeKey))
                         uniqueCDEsForthisdomain.add(entry.cdeKey);
+
                     if (!uniqueOCssForthisdomain.contains(cdes.get(entry.cdeKey).objectClassKey))
                         uniqueOCssForthisdomain.add(cdes.get(entry.cdeKey).objectClassKey);
                 }
 
-                domainContent.append("\n.");
+                //domainContent.append("\n.");
 
                 if (!uniqueCDEsForthisdomain.isEmpty())
                 {
-                    domainContent.append(dom.getTTL());
+                    //domainContent.append(dom.getTTL());
 
                     for (String cdeK : uniqueCDEsForthisdomain)
                     {
@@ -641,11 +658,11 @@ public class TCGAServiceImpl
                     }
                 }
 
-                domainContent.append("\n.");
+                //domainContent.append("\n.");
 
                 if (!uniqueOCssForthisdomain.isEmpty())
                 {
-                    domainContent.append(dom.getTTL());
+                    //domainContent.append(dom.getTTL());
 
                     for (String ockey : uniqueOCssForthisdomain)
                     {
@@ -661,8 +678,13 @@ public class TCGAServiceImpl
                     }
                 }
 
+                domainContent.append("\nmms:context tcga:TCGADomain ;");
                 domainContent.append("\n.");
+                TCGADomainRootNodeText.append("\ncimi:ITEM_GROUP.item tcga:" + dom.getRDFName() + ";");
             }
+
+            TCGADomainRootNodeText.append("\n.");
+            domainContent = TCGADomainRootNodeText.append(domainContent.toString());
 
             StringBuffer cdeContent = new StringBuffer("");
             for (CDE cde : cdes.values())
