@@ -43,11 +43,11 @@ public class CDE extends Top
     public String getRDFName() throws ModelException
     {
         if (!ModelUtils.isNull(this.longName))
-            return ModelUtils.removeNonAlphaNum(this.longName);
+            return ModelUtils.removeNonAlphaNum(this.longName)  + getSuffix();
 
         if (!ModelUtils.isNull(this.name))
-            return ModelUtils.removeNonAlphaNum(this.name);
+            return ModelUtils.removeNonAlphaNum(this.name)  + getSuffix();
 
-        return getId();
+        return getId()  + getSuffix();
     }
 }

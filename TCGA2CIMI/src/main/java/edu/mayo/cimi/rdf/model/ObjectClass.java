@@ -21,7 +21,12 @@ public class ObjectClass extends Top
     public String getId() throws ModelException
     {
         this.id = ModelUtils.key(this.prefName);
-        return id;
+        return id  + getSuffix();
+    }
+
+    public String getSuffix()
+    {
+        return "_OC" + super.getSuffix();
     }
 
     public void addCDE(String cdeKey)
@@ -33,12 +38,12 @@ public class ObjectClass extends Top
     public String getRDFName() throws ModelException
     {
         if (!ModelUtils.isNull(this.longName))
-            return ModelUtils.removeNonAlphaNum(this.longName);
+            return ModelUtils.removeNonAlphaNum(this.longName)  + getSuffix();
 
         if (!ModelUtils.isNull(this.prefName))
-            return ModelUtils.removeNonAlphaNum(this.prefName);
+            return ModelUtils.removeNonAlphaNum(this.prefName)  + getSuffix();
 
-        return getId();
+        return getId() + getSuffix();
     }
 
     public String getTTL() throws ModelException

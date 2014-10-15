@@ -21,7 +21,12 @@ public class ObjectProperty extends Top
     public String getId() throws ModelException
     {
         this.id = ModelUtils.key(this.prefName);
-        return id;
+        return id  + getSuffix();
+    }
+
+    public String getSuffix()
+    {
+        return "_OP" + super.getSuffix();
     }
 
     public void addCDE(String cdeKey)
@@ -33,20 +38,33 @@ public class ObjectProperty extends Top
     private boolean isEnumerated;
     private boolean isJavaType = false;
     private String context;
-    private String[] vds;
-    public String getTTL(boolean isEnumeratedp, String contextp, String[] vdsp) throws ModelException
+    private ValueDomain[] vds;
+    public String getTTL(String contextp, ValueDomain[] vdsp) throws ModelException
     {
-        this.isEnumerated = isEnumeratedp;
         this.context = contextp;
         this.vds = vdsp;
 
         isJavaType = false;
-
+        boolean isISO = false;
         for (int i=0; i < vdsp.length;i++)
-            if ((vdsp[i].indexOf("java") != -1)||
-                    (vdsp[i].indexOf("xsd") != -1))
-                isJavaType = true;
+        {
+            if (vdsp[i] == null)
+                continue;
 
+            String dataType = vdsp[i].vdDatatype;
+            boolean isEnum = vdsp[i].isEnumerated;
+
+            if (!isISO)
+            {
+                if ((dataType.indexOf("java") != -1) ||
+                        (dataType.indexOf("xsd") != -1))
+                    isJavaType = true;
+
+                if (("ISO".equals(ValueDomain.getCIMIType(dataType)))||
+                    (("OBJECT".equals(ValueDomain.getCIMIType(dataType)))))
+                    isISO = true;
+            }
+        }
         return this.getTTL();
     }
 
@@ -70,12 +88,12 @@ public class ObjectProperty extends Top
         if (!ModelUtils.isNull(this.context))
             text += "\nmms:context cacde:" + context + " ;" ;
 
-        if (this.vds != null)
+        if ((this.vds != null)&&(!("ELEMENT".equals(targetType))))
             for (int i=0; i < this.vds.length; i++)
-                if (ModelUtils.isNull(this.vds[i]))
+                if (ModelUtils.isNull(this.vds[i].getRDFName()))
                     continue;
                 else
-                    text += "\ncimi:ITEM_GROUP.item cacde:" + this.vds[i] + " ; ";
+                    text += "\ncimi:ITEM_GROUP.item cacde:" + this.vds[i].getRDFName() + " ; ";
 
         text += "\n.";
 
@@ -85,11 +103,11 @@ public class ObjectProperty extends Top
     public String getRDFName() throws ModelException
     {
         if (!ModelUtils.isNull(this.longName))
-            return ModelUtils.removeNonAlphaNum(this.longName);
+            return ModelUtils.removeNonAlphaNum(this.longName)  + getSuffix();
 
         if (!ModelUtils.isNull(this.prefName))
-            return ModelUtils.removeNonAlphaNum(this.prefName);
+            return ModelUtils.removeNonAlphaNum(this.prefName)  + getSuffix();
 
-        return getId();
+        return getId()  + getSuffix();
     }
 }

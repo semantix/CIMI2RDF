@@ -149,7 +149,7 @@ public class TCGAServiceImpl
                             oc.longName = ocln;
                         }
                         oc.addCDE(cde.getId());
-                        objectClasses.put(oc.getId(), oc);
+                        addObjectClass(oc);
                         cde.objectClassKey = oc.getId();
                     }
 
@@ -164,7 +164,7 @@ public class TCGAServiceImpl
                         }
                         property.addCDE(cde.getId());
 
-                        objectProperties.put(property.getId(), property);
+                        addObjectProperty(property);
                         cde.objectPropertyKey = property.getId();
                     }
 
@@ -179,7 +179,7 @@ public class TCGAServiceImpl
                     vd.vdDatatype = vdDataType;
                     vd.addUsage(cde.objectClassKey);
 
-                    valueDomains.put(vd.getId(), vd);
+                    addValueDomain(vd);
 
                     cde.valueDomainKey = vd.getId();
 
@@ -197,6 +197,60 @@ public class TCGAServiceImpl
             e.printStackTrace();
             throw new ModelException(e.getMessage());
         }
+    }
+
+    private void addObjectProperty(ObjectProperty property) throws ModelException
+    {
+        if (toSkip(property.getId()))
+            return;
+
+        property.suffixIfNameRepeated = checkDuplicates(property.getId());
+
+        objectProperties.put(property.getId(), property);
+    }
+
+    private void addObjectClass(ObjectClass oc) throws ModelException
+    {
+        if (toSkip(oc.getId()))
+            return;
+
+        oc.suffixIfNameRepeated = checkDuplicates(oc.getId());
+
+        objectClasses.put(oc.getId(), oc);
+    }
+
+    private void addValueDomain(ValueDomain vd) throws ModelException
+    {
+        if (toSkip(vd.getId()))
+            return;
+
+        vd.suffixIfNameRepeated = checkDuplicates(vd.getId());
+
+        valueDomains.put(vd.getId(), vd);
+    }
+
+    private boolean toSkip(String id)
+    {
+      return ((id == null)||
+          (id.startsWith("java"))||
+              (id.startsWith("xsd"))||
+              (id.equals("OBJECT")));
+    }
+
+    private int checkDuplicates(String id) throws ModelException
+    {
+        int howmanytimes = 0;
+
+//        if (objectClasses.containsKey(id))
+//            howmanytimes++;
+//
+//        if (objectProperties.containsKey(id))
+//            howmanytimes++;
+//
+//        if (valueDomains.containsKey(id))
+//            howmanytimes++;
+
+        return howmanytimes;
     }
 
     public void updateObjectClass(ObjectClass objClass, String xml) throws ModelException
@@ -246,7 +300,7 @@ public class TCGAServiceImpl
 
                     property.addCDE(cde.getId());
 
-                    objectProperties.put(property.getId(), property);
+                    addObjectProperty(property);
                     cde.objectPropertyKey = property.getId();
                 }
 
@@ -260,7 +314,7 @@ public class TCGAServiceImpl
                 vd.addUsage(cde.objectClassKey);
                 vd.vdDatatype = vdDataType;
 
-                valueDomains.put(vd.getId(), vd);
+                addValueDomain(vd);
 
                 cde.valueDomainKey = vd.getId();
 
@@ -384,6 +438,9 @@ public class TCGAServiceImpl
             if (!vdRefd.contains(cdeRf.valueDomainKey))
             {
                 vdRefd.add(cdeRf.valueDomainKey);
+                if (valueDomains.get(cdeRf.valueDomainKey) == null)
+                    continue;
+
                 if (valueDomains.get(cdeRf.valueDomainKey).isEnumerated)
                     enumerated++;
             }
@@ -412,6 +469,10 @@ public class TCGAServiceImpl
                 if (!all_vdRefd.contains(cdeRf.valueDomainKey))
                 {
                     all_vdRefd.add(cdeRf.valueDomainKey);
+
+                    if (valueDomains.get(cdeRf.valueDomainKey) == null)
+                        continue;
+
                     if (valueDomains.get(cdeRf.valueDomainKey).isEnumerated)
                         all_enumerated++;
                 }
@@ -736,16 +797,14 @@ public class TCGAServiceImpl
                         boolean isEnum = true;
                         String contextOC = oc.getRDFName();
                         Vector<String> vdrefs = vdKeysInContext.get(pk);
-                        String[] vdrs = new String[vdrefs.size()];
+                        ValueDomain[] vdrs = new ValueDomain[vdrefs.size()];
 
                         int i=0;
                         for (String vdk : vdrefs)
-                        {
-                            isEnum = valueDomains.get(vdk).isEnumerated;
-                            vdrs[i++] = valueDomains.get(vdk).getRDFName();
-                        }
+                            vdrs[i++] = valueDomains.get(vdk);
 
-                        propertyContent.append(op.getTTL(isEnum, contextOC,vdrs));
+
+                        propertyContent.append(op.getTTL(contextOC, vdrs));
                         if (!printPrs.contains(pk))
                             printPrs.add(pk);
                     //}
@@ -767,13 +826,12 @@ public class TCGAServiceImpl
                             continue;
 
                         vdKey = cd.valueDomainKey;
-                        isEnum = valueDomains.get(vdKey).isEnumerated;
                         contextOC = objectClasses.get(cd.objectClassKey).getRDFName();
                         break;
                     }
 
-                    String[] vds = {valueDomains.get(vdKey).getRDFName()};
-                    propertyContent.append(op.getTTL(isEnum, contextOC, vds));
+                    ValueDomain[] vds = {valueDomains.get(vdKey)};
+                    propertyContent.append(op.getTTL(contextOC, vds));
                     printPrs.add(op.getId());
                 }
             }

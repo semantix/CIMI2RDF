@@ -60,8 +60,8 @@ public class TCGADomain extends Top
     public String getRDFName() throws ModelException
     {
         if (!ModelUtils.isNull(this.domainName))
-            return ModelUtils.removeNonAlphaNum(this.domainName);
+            return ModelUtils.removeNonAlphaNum(this.domainName)  + getSuffix();
 
-        return getId();
+        return getId()  + getSuffix();
     }
 }

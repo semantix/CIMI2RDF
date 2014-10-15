@@ -20,10 +20,15 @@ public class ValueDomain extends Top
         this.name = vdName;
     }
 
+    public String getSuffix()
+    {
+        return "_VD" + super.getSuffix();
+    }
+
     public String getId() throws ModelException
     {
         this.id =  ModelUtils.key(name);
-        return id;
+        return id  + getSuffix();
     }
 
     private String context = null;
@@ -50,14 +55,14 @@ public class ValueDomain extends Top
 
         if (this.isEnumerated)
         {
-            text += "\nmms:dataElementType \"Enumerated\"^^xsd:string ;";
-            text += "\ncimi:Element.value cimi:CODED_TEXT;";
+            text += "\nmms:dataElementType \""+ this.vdDatatype +"\"^^xsd:string ;";
+            text += "\ncimi:ELEMENT.value cimi:CODED_TEXT;";
             text += "\nrdf:type mms:EnumeratedValueDomain ;";
         }
         else
         {
-            text += "\nmms:dataElementType \"NonEnumerated\"^^xsd:string ;";
-            text += "\ncimi:Element.value cimi:" + getCIMIType(this.vdDatatype) + ";";
+            text += "\nmms:dataElementType \""+ this.vdDatatype +"\"^^xsd:string ;";
+            text += "\ncimi:ELEMENT.value cimi:" + getCIMIType(this.vdDatatype) + ";";
             text += "\nrdf:type mms:ValueDomain ;";
         }
         return text;
@@ -66,13 +71,15 @@ public class ValueDomain extends Top
     public String getRDFName() throws ModelException
     {
         if (!ModelUtils.isNull(this.name))
-            return ModelUtils.removeNonAlphaNum(this.name);
+            return ModelUtils.removeNonAlphaNum(this.name) + getSuffix();
 
-        return getId();
+        return getId() + getSuffix();
     }
 
     public static String getCIMIType(String myType)
     {
+        if (myType == null)
+            return "String";
 
         if(myType.equalsIgnoreCase("NUMBER"))
             return "Real";
@@ -89,6 +96,10 @@ public class ValueDomain extends Top
 
         if(myType.equalsIgnoreCase("ALPHANUMERIC"))
             return "String";
+
+        if(myType.indexOf("Alpha") != -1)
+            return "String";
+
         if(myType.equalsIgnoreCase("java.lang.Integer"))
             return "Integer";
         if(myType.equalsIgnoreCase("java.lang.Long"))
@@ -98,6 +109,8 @@ public class ValueDomain extends Top
         if(myType.equalsIgnoreCase("java.lang.Double"))
             return "Real";
         if(myType.equalsIgnoreCase("java.lang.Boolean"))
+            return "YESNO";
+        if(myType.equalsIgnoreCase("Boolean"))
             return "YESNO";
         if(myType.equalsIgnoreCase("java.util.Date"))
             return "DATE";
@@ -113,13 +126,16 @@ public class ValueDomain extends Top
             return "String";
 
         if(myType.startsWith("ISO"))
-            return "CODED_TEXT";
+            return "ISO";
+
+        if(myType.equalsIgnoreCase("OBJECT"))
+            return "OBJECT";
 
         if(myType.startsWith("anyClass"))
             return "URI_VALUE";
 
         System.out.print("Could not map input value domain data type:" + myType);
-        System.out.println("Returning Type=String");
+        System.out.println(" Returning Type=String");
 
         return "String";
     }
