@@ -47,11 +47,11 @@ public class ValueDomain extends Top
         String text =  "\n<http://rdf.cacde-qa.org/cacde/element#" + this.getRDFName() + ">" +
                 "\nrdf:type cimi:ELEMENT ;"+
                 //"\nrdf:type mms:DataElement ;" +
-                "\nrdfs:label \"" + this.name + "\"^^xsd:string ;" +
-                "\nskos:definition \"" + this.name + "\"^^xsd:string ;" +
-                "\nmms:dataElementDescription \"" + this.name + "\"^^xsd:string ;" +
-                "\nmms:dataElementLabel \"" + this.name + "\"^^xsd:string ;" +
-                "\nmms:dataElementName \"" + this.name + "\"^^xsd:string ;";
+                "\nrdfs:label \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;" +
+                "\nskos:definition \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementDescription \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementLabel \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementName \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;";
 
         if (this.isEnumerated)
         {

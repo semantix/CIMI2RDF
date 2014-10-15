@@ -29,11 +29,13 @@ public class CDE extends Top
 
     public String getTTL() throws ModelException
     {
+        if (this.name == null)
+            this.name = "";
 
         String val =  "\n<http://rdf.cadsr.org/cde#" + this.getRDFName() + "> " +
                 "\nrdf:type cimi:ELEMENT;" +
-                "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +
-                "\nskos:altLabel \"" + this.name + "\"^^xsd:string ;" +
+                "\nrdfs:label \"" + ModelUtils.removeTypeInformation(this.longName).trim() + "\"^^xsd:string ;" +
+                "\nskos:altLabel \"" + ModelUtils.removeTypeInformation(this.name).trim() + "\"^^xsd:string ;" +
                 "\nrdfs:label \"" + this.publicId + "\"^^xsd:string .";
 
         return val;

@@ -78,11 +78,11 @@ public class ObjectProperty extends Top
         String text =  "\n<http://rdf.cacde-qa.org/cacde/element#" + this.getRDFName() + ">" +
                 "\nrdf:type cimi:" + targetType + " ;" +
                 "\nrdf:type mms:DataElement ;" +
-                "\nrdfs:label \"" + this.longName + "\"^^xsd:string ;" +
-                "\nskos:definition \"" + this.longName + "\"^^xsd:string ;" +
-                "\nmms:dataElementDescription \"" + this.longName + "\"^^xsd:string ;" +
-                "\nmms:dataElementLabel \"" + this.longName + "\"^^xsd:string ;" +
-                "\nmms:dataElementName \"" + this.prefName + "\"^^xsd:string ;" +
+                "\nrdfs:label \"" + ModelUtils.removeTypeInformation(this.longName).trim() + "\"^^xsd:string ;" +
+                "\nskos:definition \"" + ModelUtils.removeTypeInformation(this.longName).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementDescription \"" + ModelUtils.removeTypeInformation(this.longName).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementLabel \"" + ModelUtils.removeTypeInformation(this.longName).trim() + "\"^^xsd:string ;" +
+                "\nmms:dataElementName \"" + ModelUtils.removeTypeInformation(this.prefName).trim() + "\"^^xsd:string ;" +
                 "\nmms:dataElementType \"Property\"^^xsd:string ;" ;
 
         if (!ModelUtils.isNull(this.context))
